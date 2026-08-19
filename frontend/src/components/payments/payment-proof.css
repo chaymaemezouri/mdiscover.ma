@@ -1,0 +1,145 @@
+.proof-upload,
+.proof-status {
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px solid rgba(14, 42, 71, 0.1);
+  border-radius: 16px;
+  background: #f8fafb;
+  color: #0e2a47;
+}
+
+.proof-upload__head,
+.proof-status {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+}
+
+.proof-upload__head svg,
+.proof-status svg {
+  flex: 0 0 auto;
+  color: #4e7a63;
+}
+
+.proof-upload__head h3,
+.proof-status strong {
+  margin: 0;
+  font-size: 0.92rem;
+}
+
+.proof-upload__head p,
+.proof-status p {
+  margin: 0.2rem 0 0;
+  color: #6e7f96;
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.proof-upload__file {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 46px;
+  margin-top: 0.9rem;
+  padding: 0.65rem 0.85rem;
+  border: 1px dashed rgba(14, 42, 71, 0.24);
+  border-radius: 12px;
+  background: #fff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.proof-upload__file input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.proof-upload__file:focus-within {
+  outline: 2px solid #0e2a47;
+  outline-offset: 2px;
+}
+
+.proof-upload__note {
+  display: grid;
+  gap: 0.35rem;
+  margin-top: 0.8rem;
+  color: #6e7f96;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.proof-upload__note textarea {
+  width: 100%;
+  min-height: 64px;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid rgba(14, 42, 71, 0.14);
+  border-radius: 11px;
+  background: #fff;
+  color: #0e2a47;
+  font: inherit;
+  font-size: 0.82rem;
+  resize: vertical;
+}
+
+.proof-upload__submit {
+  width: 100%;
+  min-height: 46px;
+  margin-top: 0.8rem;
+  border: 0;
+  border-radius: 12px;
+  background: #0e2a47;
+  color: #fff;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.proof-upload__submit:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.proof-upload__error,
+.proof-upload__hint {
+  margin: 0.55rem 0 0;
+  font-size: 0.72rem;
+  line-height: 1.45;
+}
+
+.proof-upload__error {
+  color: #c34855;
+}
+
+.proof-upload__hint {
+  color: #6e7f96;
+}
+
+.proof-upload__rejected {
+  margin-bottom: 0.9rem;
+  padding: 0.7rem 0.8rem;
+  border-radius: 11px;
+  background: rgba(227, 93, 106, 0.09);
+  color: #b6404d;
+}
+
+.proof-upload__rejected strong {
+  font-size: 0.8rem;
+}
+
+.proof-upload__rejected p {
+  margin: 0.2rem 0 0;
+  font-size: 0.74rem;
+}
+
+.proof-status--pending {
+  background: rgba(78, 122, 99, 0.07);
+}
+
+.proof-status--success {
+  border-color: rgba(78, 122, 99, 0.2);
+  background: rgba(78, 122, 99, 0.1);
+}

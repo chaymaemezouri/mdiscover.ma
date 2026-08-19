@@ -1,0 +1,90 @@
+/* Account hub — aligned with checkout */
+
+.compte-profile {
+  margin-top: 0.15rem;
+}
+
+.compte-admin {
+  margin: 0.85rem 0 0;
+  font-size: 0.8125rem;
+}
+
+.compte-admin a {
+  color: var(--ck-green);
+  font-weight: 600;
+}
+
+.compte-admin a:hover {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.compte-links {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.65rem;
+  margin-top: 1rem;
+}
+
+.compte-link {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--ck-border);
+  border-radius: 11px;
+  background: #fff;
+  color: inherit;
+  text-decoration: none;
+  transition: background 150ms ease, border-color 150ms ease;
+}
+
+.compte-link:hover {
+  background: rgba(14, 42, 71, 0.015);
+  border-color: rgba(14, 42, 71, 0.16);
+}
+
+.compte-link strong {
+  font-size: 0.9375rem;
+  font-weight: 650;
+}
+
+.compte-link span {
+  color: var(--ck-muted);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+
+.compte-logout {
+  margin-top: 1.25rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--ck-line);
+}
+
+.compte-logout__btn {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ck-muted);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.compte-logout__btn:hover {
+  color: var(--ck-navy);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+@media (max-width: 900px) {
+  .compte-links {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 767px) {
+  .compte-links {
+    grid-template-columns: 1fr;
+  }
+}

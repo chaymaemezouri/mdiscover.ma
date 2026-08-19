@@ -1,0 +1,84 @@
+/* Order detail — aligned with checkout / success */
+
+.order-detail__head p {
+  margin: 0.45rem 0 0;
+  color: var(--ck-muted);
+  font-size: 0.9375rem;
+}
+
+.order-detail__date {
+  margin: 0.25rem 0 0 !important;
+  font-size: 0.8125rem !important;
+}
+
+.order-detail__grid {
+  margin-top: 0.25rem;
+}
+
+.order-detail__panel {
+  padding: 1rem 1.15rem;
+}
+
+.order-detail__panel + .order-detail__panel {
+  margin-top: 0;
+}
+
+.order-detail__ship-list li span:last-child {
+  font-size: 0.8125rem;
+}
+
+.order-detail__proof {
+  margin-top: 0.25rem;
+}
+
+.order-detail__proof .proof-upload,
+.order-detail__proof .proof-status {
+  margin-top: 0;
+  border-color: var(--ck-border);
+  border-radius: 10px;
+  background: #fff;
+}
+
+.order-detail__totals {
+  margin-top: 0.65rem;
+  padding-top: 0.65rem;
+  border-top: 1px solid var(--ck-line);
+}
+
+.order-detail__totals.checkout-totals {
+  padding-top: 0.65rem;
+}
+
+.order-detail__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1.25rem;
+  margin-top: 1rem;
+}
+
+.order-detail__cta {
+  width: auto;
+  min-width: min(100%, 200px);
+  flex: 0 1 auto;
+  max-width: 280px;
+}
+
+.order-detail__skeleton {
+  min-height: 320px;
+  margin-top: 1rem;
+  border-radius: 11px;
+}
+
+@media (max-width: 767px) {
+  .order-detail__actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .order-detail__cta {
+    max-width: none;
+    width: 100%;
+  }
+}

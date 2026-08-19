@@ -1,0 +1,73 @@
+# Production (OVH VPS) — Mdiscover Impex Food
+# Usage: docker compose -f docker-compose.prod.yml up -d --build
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: mdiscover-postgres-prod
+    restart: always
+    env_file:
+      - ./backend/.env
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres_data_prod:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - mdiscover-net
+
+  redis:
+    image: redis:7-alpine
+    container_name: mdiscover-redis-prod
+    restart: always
+    volumes:
+      - redis_data_prod:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+    networks:
+      - mdiscover-net
+
+  app:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: production
+    container_name: mdiscover-app-prod
+    restart: always
+    env_file:
+      - ./backend/.env
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?schema=public
+      REDIS_URL: redis://redis:6379
+    ports:
+      - "${PORT:-3000}:3000"
+    volumes:
+      - uploads_data_prod:/app/uploads
+      - logs_data_prod:/app/logs
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - mdiscover-net
+
+networks:
+  mdiscover-net:
+    driver: bridge
+
+volumes:
+  postgres_data_prod:
+  redis_data_prod:
+  uploads_data_prod:
+  logs_data_prod:

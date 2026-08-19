@@ -1,0 +1,84 @@
+/* Quotes list — aligned with orders / checkout */
+
+.quotes-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem 1.5rem;
+  flex-wrap: wrap;
+}
+
+.quotes-head__cta {
+  width: auto;
+  min-width: 180px;
+  max-width: 240px;
+  min-height: 48px;
+  flex: 0 0 auto;
+}
+
+.quotes-list__head,
+.quotes-row {
+  grid-template-columns:
+    minmax(8.5rem, 1.1fr)
+    7.2rem
+    minmax(6rem, 0.9fr)
+    minmax(7.5rem, 1fr)
+    8rem
+    3.75rem;
+}
+
+.quotes-row__dest {
+  color: var(--ck-muted);
+  font-size: 0.875rem;
+}
+
+.quotes-message {
+  margin: 0;
+  color: var(--ck-navy);
+  font-size: 0.875rem;
+  line-height: 1.55;
+}
+
+.quotes-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.quotes-actions .checkout-cta {
+  width: auto;
+  min-width: 160px;
+  max-width: 240px;
+  min-height: 48px;
+}
+
+.quotes-actions__secondary {
+  background: transparent !important;
+  color: var(--ck-navy) !important;
+  border: 1px solid var(--ck-border) !important;
+}
+
+.quotes-actions__secondary:hover:not(:disabled) {
+  background: rgba(14, 42, 71, 0.03) !important;
+  transform: none;
+}
+
+@media (max-width: 900px) {
+  .quotes-head__cta {
+    max-width: none;
+    width: 100%;
+  }
+
+  .quotes-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      'num total'
+      'date dest'
+      'status action';
+  }
+
+  .quotes-row__dest {
+    grid-area: dest;
+    text-align: right;
+  }
+}

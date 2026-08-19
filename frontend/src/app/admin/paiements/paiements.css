@@ -1,0 +1,211 @@
+.admin-payments {
+  color: #0e2a47;
+}
+
+.admin-payments__sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+.admin-payments__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.admin-payments__head h1 {
+  margin: 0;
+  font-size: 2rem;
+  letter-spacing: -0.035em;
+}
+
+.admin-payments__head p {
+  margin: 0.35rem 0 0;
+  color: #6e7f96;
+  font-size: 0.85rem;
+}
+
+.admin-payments__filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-bottom: 1rem;
+}
+
+.admin-payments__filters button {
+  min-height: 38px;
+  padding: 0.4rem 0.8rem;
+  border: 1px solid rgba(14, 42, 71, 0.13);
+  border-radius: 999px;
+  background: #fff;
+  color: #0e2a47;
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.admin-payments__filters button.is-active {
+  border-color: #0e2a47;
+  background: #0e2a47;
+  color: #fff;
+}
+
+.admin-payments__list {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.admin-payment {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.8fr) auto;
+  gap: 1rem;
+  align-items: center;
+  padding: 1rem 1.1rem;
+  border: 1px solid rgba(14, 42, 71, 0.08);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 8px 26px rgba(14, 42, 71, 0.04);
+}
+
+.admin-payment__order strong,
+.admin-payment__amount strong {
+  display: block;
+  font-size: 0.9rem;
+}
+
+.admin-payment__order span,
+.admin-payment__amount span {
+  display: block;
+  margin-top: 0.2rem;
+  color: #6e7f96;
+  font-size: 0.72rem;
+}
+
+.admin-payment__status {
+  display: inline-flex;
+  width: fit-content;
+  margin-top: 0.4rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  background: rgba(14, 42, 71, 0.07);
+  color: #0e2a47;
+  font-size: 0.64rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+}
+
+.admin-payment__status.is-proof {
+  background: rgba(78, 122, 99, 0.12);
+  color: #3f6a54;
+}
+
+.admin-payment__status.is-failed {
+  background: rgba(227, 93, 106, 0.11);
+  color: #bd4652;
+}
+
+.admin-payment__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.45rem;
+}
+
+.admin-payment__actions a,
+.admin-payment__actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0.45rem 0.75rem;
+  border: 1px solid rgba(14, 42, 71, 0.14);
+  border-radius: 10px;
+  background: #fff;
+  color: #0e2a47;
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 750;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.admin-payment__actions button.is-confirm {
+  border-color: #4e7a63;
+  background: #4e7a63;
+  color: #fff;
+}
+
+.admin-payment__actions button.is-reject {
+  color: #d14f5c;
+}
+
+.admin-payment__actions button:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
+.admin-payment__reject {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 0.55rem;
+  padding-top: 0.8rem;
+  border-top: 1px solid rgba(14, 42, 71, 0.07);
+}
+
+.admin-payment__reject input {
+  flex: 1;
+  min-width: 0;
+  min-height: 42px;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid rgba(14, 42, 71, 0.14);
+  border-radius: 10px;
+  color: #0e2a47;
+  font: inherit;
+  font-size: 0.78rem;
+}
+
+.admin-payment__reject button {
+  min-height: 42px;
+  padding: 0.5rem 0.8rem;
+  border: 0;
+  border-radius: 10px;
+  background: #e35d6a;
+  color: #fff;
+  font: inherit;
+  font-size: 0.74rem;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.admin-payments__empty {
+  padding: 2.5rem 1rem;
+  border: 1px solid rgba(14, 42, 71, 0.08);
+  border-radius: 16px;
+  background: #fff;
+  color: #6e7f96;
+  text-align: center;
+}
+
+@media (max-width: 760px) {
+  .admin-payment {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .admin-payment__actions {
+    justify-content: flex-start;
+  }
+
+  .admin-payment__reject {
+    grid-column: auto;
+    display: grid;
+  }
+}

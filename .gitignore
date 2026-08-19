@@ -1,0 +1,49 @@
+# Dependencies
+node_modules/
+dist/
+coverage/
+generated/
+
+# Env & secrets
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Uploads & logs
+uploads/
+logs/
+*.log
+
+# Next.js
+.next/
+out/
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+.cursor/
+*.swp
+
+# Prisma
+prisma/*.db
+prisma/*.db-journal
+
+# Windows reserved names (git can try to index NUL)
+NUL
+nul
+CON
+con
+AUX
+aux
+
+# Tooling noise from prisma init
+.agents/
+.claude/
+.windsurf/
+skills-lock.json
+
+# Docker
+docker-data/
