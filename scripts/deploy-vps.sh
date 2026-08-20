@@ -50,6 +50,14 @@ fi
 echo "==> Backend (Docker)"
 docker compose -p mdiscover --env-file backend/.env -f docker-compose.prod.yml up -d --build app
 
+echo "==> Attente démarrage API"
+sleep 8
+if ! docker ps --format '{{.Names}} {{.Status}}' | grep -q 'mdiscover-app-prod Up'; then
+  echo "ERROR: conteneur API non démarré" >&2
+  docker logs mdiscover-app-prod --tail 80 || true
+  exit 1
+fi
+
 echo "==> Frontend (build)"
 cd frontend
 npm install
@@ -65,13 +73,14 @@ fi
 pm2 save
 
 echo "==> Health check"
-for i in $(seq 1 30); do
+for i in $(seq 1 45); do
   if curl -sf http://127.0.0.1:3100/api/v1/health >/dev/null; then
     echo "API OK"
     break
   fi
-  if [[ "$i" -eq 30 ]]; then
+  if [[ "$i" -eq 45 ]]; then
     echo "ERROR: API health check failed" >&2
+    docker logs mdiscover-app-prod --tail 80 || true
     exit 1
   fi
   sleep 2
