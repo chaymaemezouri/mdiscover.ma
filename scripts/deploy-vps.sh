@@ -4,10 +4,38 @@
 
 set -euo pipefail
 
+load_node_tools() {
+  export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
+  if [[ -s "$NVM_DIR/nvm.sh" ]]; then
+    # shellcheck source=/dev/null
+    . "$NVM_DIR/nvm.sh"
+  elif [[ -s "$HOME/.fnm/fnm" ]]; then
+    # shellcheck source=/dev/null
+    eval "$("$HOME/.fnm/fnm" env)"
+  elif [[ -s "$HOME/.local/share/fnm/fnm" ]]; then
+    # shellcheck source=/dev/null
+    eval "$("$HOME/.local/share/fnm/fnm" env)"
+  elif [[ -s "$HOME/.profile" ]]; then
+    # shellcheck source=/dev/null
+    . "$HOME/.profile"
+  elif [[ -s "$HOME/.bashrc" ]]; then
+    # shellcheck source=/dev/null
+    . "$HOME/.bashrc"
+  fi
+
+  if ! command -v npm >/dev/null 2>&1; then
+    echo "ERROR: npm introuvable (SSH non interactif). Installe Node via nvm ou ajoute-le au PATH." >&2
+    exit 1
+  fi
+
+  echo "==> Node $(node -v) | npm $(npm -v)"
+}
+
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
 
 echo "==> MDISCOVER deploy @ $(date -Is)"
+load_node_tools
 
 if [[ ! -f backend/.env ]]; then
   echo "ERROR: backend/.env manquant sur le VPS." >&2
