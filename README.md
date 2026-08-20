@@ -47,3 +47,59 @@ cd frontend && npm run dev
 - Front : http://localhost:3001
 - API : http://localhost:3000/api/v1
 - Health : http://localhost:3000/api/v1/health
+
+## CI/CD (GitHub → VPS OVH)
+
+Chaque `git push` sur `main` :
+
+1. **CI** — build + lint backend et frontend
+2. **Deploy** — pull sur le VPS, rebuild API Docker + frontend PM2
+
+### 1. Secrets GitHub
+
+Repo → **Settings → Secrets and variables → Actions** :
+
+| Secret | Valeur |
+|--------|--------|
+| `VPS_HOST` | `51.255.161.97` |
+| `VPS_USER` | `ubuntu` |
+| `VPS_SSH_KEY` | clé privée SSH (voir ci-dessous) |
+| `VPS_DEPLOY_PATH` | `/home/ubuntu/projects/mdiscover` (optionnel) |
+
+### 2. Clé SSH déploiement (une fois, sur le VPS)
+
+```bash
+ssh-keygen -t ed25519 -C "github-actions-mdiscover" -f ~/.ssh/github_actions_mdiscover -N ""
+cat ~/.ssh/github_actions_mdiscover.pub >> ~/.ssh/authorized_keys
+cat ~/.ssh/github_actions_mdiscover
+```
+
+Copie **toute** la clé privée affichée dans le secret GitHub `VPS_SSH_KEY`.
+
+### 3. Fichiers prod sur le VPS (ne pas committer)
+
+```bash
+# backend/.env — déjà en place
+# frontend/.env.production
+cp frontend/.env.production.example frontend/.env.production
+```
+
+### 4. Workflow quotidien
+
+```bash
+git add -A
+git commit -m "feat: ma modification"
+git push
+```
+
+GitHub Actions déploie automatiquement. Suivi : onglet **Actions** du repo.
+
+Deploy manuel : **Actions → Deploy Production → Run workflow**.
+
+Deploy manuel sur le VPS :
+
+```bash
+cd ~/projects/mdiscover
+git pull origin main
+bash scripts/deploy-vps.sh
+```

@@ -94,18 +94,20 @@ export default function AdminDashboardPage() {
     Promise.all([
       api<AdminDashboard>('/admin/dashboard'),
       api<SalesStats>(`/admin/stats/sales${qs}`).catch(() => null),
-      api<TopProduct[]>(`/admin/stats/top-products${qs}`).catch(() => []),
-      api<OrderSummary[] | { items: OrderSummary[] }>('/admin/orders').catch(
-        () => [],
+      api<TopProduct[]>(`/admin/stats/top-products${qs}`).catch(
+        (): TopProduct[] => [],
       ),
-      api<Audit[]>('/admin/audit-logs?take=8').catch(() => []),
+      api<OrderSummary[] | { items: OrderSummary[] }>('/admin/orders').catch(
+        (): OrderSummary[] => [],
+      ),
+      api<Audit[]>('/admin/audit-logs?take=8').catch((): Audit[] => []),
     ])
       .then(([dash, stats, products, orderList, audit]) => {
         setData(dash);
         setSales(stats);
-        setTop(asList(products).slice(0, 6));
-        setOrders(asList(orderList).slice(0, 6));
-        setLogs(asList(audit).slice(0, 6));
+        setTop(asList<TopProduct>(products).slice(0, 6));
+        setOrders(asList<OrderSummary>(orderList).slice(0, 6));
+        setLogs(asList<Audit>(audit).slice(0, 6));
         setError(null);
       })
       .catch((e) =>

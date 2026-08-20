@@ -6,7 +6,7 @@ WORKDIR /app
 COPY package*.json ./
 COPY prisma ./prisma/
 
-RUN npm ci
+RUN npm install
 
 COPY . .
 
@@ -25,7 +25,7 @@ RUN addgroup -S app && adduser -S app -G app
 COPY package*.json ./
 COPY prisma ./prisma/
 
-RUN npm ci --omit=dev && npx prisma generate && npm cache clean --force
+RUN npm install --omit=dev && npx prisma generate && npm cache clean --force
 
 COPY --from=builder /app/dist ./dist
 

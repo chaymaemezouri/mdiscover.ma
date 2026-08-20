@@ -16,7 +16,7 @@ import {
   formatPrice,
 } from '@/lib/api';
 import { formatAdminDate } from '../admin-utils';
-import { useAdminConfirm } from './AdminConfirm';
+import { useAdminConfirm } from '../AdminConfirm';
 
 type Tab = 'boutique' | 'marques' | 'promos' | 'import' | 'journal';
 
@@ -164,14 +164,14 @@ export default function AdminSettingsPage() {
       api<Audit[]>('/admin/audit-logs?take=200').catch(() => []),
     ])
       .then(([settings, brandList, promoList, audit]) => {
-        const next = { ...COMPANY_DEFAULTS };
-        asList(settings).forEach((s) => {
+        const next: Record<string, string> = { ...COMPANY_DEFAULTS };
+        asList<Setting>(settings).forEach((s) => {
           next[s.key] = s.value;
         });
         setMap(next);
-        setBrands(asList(brandList));
-        setPromos(asList(promoList));
-        setLogs(asList(audit));
+        setBrands(asList<Brand>(brandList));
+        setPromos(asList<Promo>(promoList));
+        setLogs(asList<Audit>(audit));
         setError(null);
       })
       .catch((e) =>

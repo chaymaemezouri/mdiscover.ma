@@ -1009,8 +1009,12 @@ export async function apiDownload(path: string, filename: string) {
   URL.revokeObjectURL(url);
 }
 
-export function asList<T>(data: T[] | { items?: T[] } | null | undefined): T[] {
+export function asList<T>(data: unknown): T[] {
   if (!data) return [];
-  if (Array.isArray(data)) return data;
-  return data.items ?? [];
+  if (Array.isArray(data)) return data as T[];
+  if (typeof data === 'object' && data !== null && 'items' in data) {
+    const items = (data as { items?: T[] }).items;
+    return items ?? [];
+  }
+  return [];
 }

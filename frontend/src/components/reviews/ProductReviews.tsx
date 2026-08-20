@@ -146,7 +146,7 @@ export function ProductReviews({
   }
 
   const writeButton = !mine ? (
-    <button type="button" className="product-reviews__write" onClick={openForm}>
+    <button type="button" className="product-reviews__write" onClick={() => openForm()}>
       <MessageSquarePlus size={16} aria-hidden />
       Donner votre avis
     </button>
