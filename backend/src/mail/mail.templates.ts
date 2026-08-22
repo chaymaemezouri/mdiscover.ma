@@ -43,9 +43,9 @@ function layout(opts: {
   const cta =
     ctaLabel && ctaUrl
       ? `<tr>
-          <td style="padding:28px 0 8px;">
+          <td align="center" style="padding:28px 32px 8px;text-align:center;">
             <a href="${escapeHtml(ctaUrl)}"
-               style="display:inline-block;background:#0e2a47;color:#ffffff;text-decoration:none;font-weight:700;font-size:14px;letter-spacing:0.02em;padding:14px 28px;border-radius:999px;">
+               style="display:inline-block;background:#0e2a47;color:#ffffff;text-decoration:none;font-weight:700;font-size:14px;letter-spacing:0.01em;padding:12px 22px;border-radius:8px;">
               ${escapeHtml(ctaLabel)}
             </a>
           </td>
