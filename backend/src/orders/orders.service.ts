@@ -11,6 +11,7 @@ import {
   Role,
 } from '@prisma/client';
 import { AuditService } from '../audit/audit.service';
+import { MailService } from '../mail/mail.service';
 import { PrismaService } from '../prisma/prisma.service';
 import {
   CancelOrderDto,
@@ -69,6 +70,7 @@ export class OrdersService {
     private readonly prisma: PrismaService,
     private readonly pdf: OrderPdfService,
     private readonly audit: AuditService,
+    private readonly mail: MailService,
   ) {}
 
   async listMine(userId: string) {
@@ -222,6 +224,8 @@ export class OrdersService {
         true,
       );
     }
+
+    void this.notifyOrderStatus(updated, dto.status);
 
     return this.serialize(await this.findOrThrow(id));
   }
@@ -383,5 +387,34 @@ export class OrdersService {
       })),
       allowedNextStatuses: ALLOWED[order.status] ?? [],
     };
+  }
+
+  private customerDisplayName(
+    order: Prisma.OrderGetPayload<{ include: typeof orderInclude }>,
+  ) {
+    const individual = order.user?.individualProfile;
+    if (individual) {
+      return `${individual.firstName} ${individual.lastName}`.trim();
+    }
+    const pro = order.user?.professionalProfile;
+    if (pro?.contactPerson) return pro.contactPerson;
+    if (pro?.companyName) return pro.companyName;
+    return order.user?.email?.split('@')[0] || 'Client';
+  }
+
+  private notifyOrderStatus(
+    order: Prisma.OrderGetPayload<{ include: typeof orderInclude }>,
+    status: OrderStatus,
+  ) {
+    const email = order.user?.email;
+    if (!email) return;
+    void this.mail.sendOrderStatus(status, {
+      email,
+      customerName: this.customerDisplayName(order),
+      orderNumber: order.number,
+      orderId: order.id,
+      trackingNumber: order.trackingNumber,
+      carrierName: order.carrierName,
+    });
   }
 }

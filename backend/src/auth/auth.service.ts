@@ -12,6 +12,7 @@ import { Locale, ProValidationStatus, Role, UserStatus } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { createHash, randomUUID } from 'crypto';
 import { AuditService } from '../audit/audit.service';
+import { MailService } from '../mail/mail.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { toSafeUser } from '../users/user.mapper';
 import { CompleteGoogleProfessionalDto } from './dto/complete-google-professional.dto';
@@ -38,6 +39,7 @@ export class AuthService {
     private readonly jwt: JwtService,
     private readonly config: ConfigService,
     private readonly audit: AuditService,
+    private readonly mail: MailService,
   ) {}
 
   async registerIndividual(dto: RegisterIndividualDto, meta?: RequestMeta) {
@@ -73,6 +75,11 @@ export class AuthService {
       ip: meta?.ip,
       userAgent: meta?.userAgent,
     });
+
+    void this.mail.sendWelcome(
+      user.email,
+      `${dto.firstName} ${dto.lastName}`.trim(),
+    );
 
     return this.issueTokens(user, meta);
   }
@@ -117,6 +124,8 @@ export class AuthService {
       ip: meta?.ip,
       userAgent: meta?.userAgent,
     });
+
+    void this.mail.sendWelcome(user.email, dto.contactPerson || dto.companyName);
 
     return this.issueTokens(user, meta);
   }
@@ -299,6 +308,7 @@ export class AuthService {
           professionalProfile: true,
         },
       });
+      void this.mail.sendWelcome(user.email, `${firstName} ${lastName}`.trim());
     } else {
       user = await this.prisma.user.update({
         where: { id: user.id },

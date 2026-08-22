@@ -23,6 +23,7 @@ import { ContentModule } from './content/content.module';
 import { AdminModule } from './admin/admin.module';
 import { ShippingModule } from './shipping/shipping.module';
 import { UsersModule } from './users/users.module';
+import { MailModule } from './mail/mail.module';
 
 function validateEnv(config: Record<string, unknown>) {
   const validated = plainToInstance(EnvValidation, config, {
@@ -51,6 +52,7 @@ function validateEnv(config: Record<string, unknown>) {
       },
     ]),
     PrismaModule,
+    MailModule,
     AuditModule,
     AuthModule,
     UsersModule,

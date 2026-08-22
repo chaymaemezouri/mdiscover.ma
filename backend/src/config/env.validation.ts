@@ -80,4 +80,23 @@ export class EnvValidation {
   @IsString()
   @IsOptional()
   GOOGLE_CALLBACK_URL?: string;
+
+  /** Gmail SMTP — compte expéditeur */
+  @IsString()
+  @IsOptional()
+  MAIL_USER?: string;
+
+  /** Mot de passe d’application Gmail (pas le mot de passe du compte) */
+  @IsString()
+  @IsOptional()
+  MAIL_PASS?: string;
+
+  /** Ex. "MDiscover <contact@mdiscover.ma>" */
+  @IsString()
+  @IsOptional()
+  MAIL_FROM?: string;
+
+  @IsString()
+  @IsOptional()
+  MAIL_SUPPORT?: string;
 }

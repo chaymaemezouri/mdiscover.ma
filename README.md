@@ -48,6 +48,34 @@ cd frontend && npm run dev
 - API : http://localhost:3000/api/v1
 - Health : http://localhost:3000/api/v1/health
 
+## Emails transactionnels (Gmail)
+
+Templates pro MDiscover (logo + branding) envoyés automatiquement :
+
+| Événement | Email |
+|-----------|--------|
+| Inscription (ou 1er login Google) | Bienvenue |
+| Chaque connexion client (email ou Google) | Bon retour |
+| Statut commande → Confirmée | Commande confirmée |
+| → En préparation | En préparation |
+| → Expédiée / En livraison | En livraison |
+| → Livrée | Livrée |
+
+Dans `backend/.env` :
+
+```env
+MAIL_USER=votre@gmail.com
+MAIL_PASS=xxxx xxxx xxxx xxxx
+MAIL_FROM=MDiscover <votre@gmail.com>
+MAIL_SUPPORT=contact@mdiscover.ma
+```
+
+`MAIL_PASS` = **mot de passe d’application** Google (pas le mot de passe du compte) :
+1. Activez la validation en 2 étapes
+2. Créez un mot de passe d’app : https://myaccount.google.com/apppasswords
+
+Sans `MAIL_USER` / `MAIL_PASS`, l’API démarre normalement et les emails sont ignorés (log warning).
+
 ## CI/CD (GitHub → VPS OVH)
 
 Chaque `git push` sur `main` :
