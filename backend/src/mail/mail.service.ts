@@ -41,6 +41,15 @@ export class MailService {
   constructor(private readonly config: ConfigService) {
     const user = this.config.get<string>('MAIL_USER')?.trim();
     const pass = this.config.get<string>('MAIL_PASS')?.trim();
+    const host = this.config.get<string>('MAIL_HOST')?.trim();
+    const portRaw = this.config.get<string>('MAIL_PORT')?.trim();
+    const port = portRaw ? Number(portRaw) : host ? 465 : undefined;
+    const secureEnv = this.config.get<string>('MAIL_SECURE')?.trim();
+    const secure =
+      secureEnv === 'true' ||
+      secureEnv === '1' ||
+      (secureEnv == null && (port === 465 || port == null));
+
     this.from =
       this.config.get<string>('MAIL_FROM')?.trim() ||
       (user ? `MDiscover <${user}>` : 'MDiscover <noreply@mdiscover.ma>');
@@ -48,15 +57,26 @@ export class MailService {
     this.enabled = Boolean(user && pass);
     if (!this.enabled) {
       this.logger.warn(
-        'Mail désactivé : définissez MAIL_USER et MAIL_PASS (mot de passe d’application Gmail).',
+        'Mail désactivé : définissez MAIL_USER et MAIL_PASS (SMTP hébergeur ou Gmail).',
       );
       return;
     }
 
-    this.transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: { user, pass },
-    });
+    if (host) {
+      this.transporter = nodemailer.createTransport({
+        host,
+        port: port ?? 465,
+        secure: secure ?? true,
+        auth: { user, pass },
+      });
+      this.logger.log(`Mail SMTP configuré → ${host}:${port ?? 465}`);
+    } else {
+      this.transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: { user, pass },
+      });
+      this.logger.log('Mail configuré via Gmail');
+    }
   }
 
   private brand(): BrandVars {
@@ -67,20 +87,51 @@ export class MailService {
       brandName: 'MDiscover',
       logoUrl: `${siteUrl}/logo-login.png`,
       siteUrl,
-      supportEmail:
-        this.config.get<string>('MAIL_SUPPORT')?.trim() ||
-        this.config.get<string>('MAIL_USER')?.trim() ||
-        'contact@mdiscover.ma',
+      supportEmail: this.inboxContact(),
       year: new Date().getFullYear(),
     };
   }
 
-  private adminInbox() {
+  /** Formulaire contact général + support client */
+  private inboxContact() {
     return (
+      this.config.get<string>('MAIL_CONTACT')?.trim() ||
       this.config.get<string>('MAIL_SUPPORT')?.trim() ||
       this.config.get<string>('MAIL_USER')?.trim() ||
       'contact@mdiscover.ma'
     );
+  }
+
+  /** Devis / sourcing / export B2B */
+  private inboxVentes() {
+    return (
+      this.config.get<string>('MAIL_VENTES')?.trim() ||
+      this.inboxContact()
+    );
+  }
+
+  /** Commandes / sales */
+  private inboxSales() {
+    return (
+      this.config.get<string>('MAIL_SALES')?.trim() ||
+      this.inboxVentes()
+    );
+  }
+
+  /** Oriente le message contact selon le sujet du formulaire */
+  private inboxForContactTopic(topic: string) {
+    const t = topic.trim().toLowerCase();
+    if (
+      t.includes('devis') ||
+      t.includes('sourcing') ||
+      t.includes('export')
+    ) {
+      return this.inboxVentes();
+    }
+    if (t.includes('commande')) {
+      return this.inboxSales();
+    }
+    return this.inboxContact();
   }
 
   private async send(opts: {
@@ -164,6 +215,7 @@ export class MailService {
 
   async sendAdminContact(payload: ContactMailPayload) {
     const brand = this.brand();
+    const to = this.inboxForContactTopic(payload.topic);
     const content = adminAlertEmail({
       ...brand,
       subject: `Contact · ${payload.topic}`,
@@ -185,7 +237,7 @@ export class MailService {
       ctaUrl: `${brand.siteUrl}/admin/contact`,
     });
     return this.send({
-      to: this.adminInbox(),
+      to,
       replyTo: payload.email,
       ...content,
     });
@@ -226,7 +278,7 @@ export class MailService {
       ctaUrl: `${brand.siteUrl}/admin/devis/${opts.quoteId}`,
     });
     return this.send({
-      to: this.adminInbox(),
+      to: this.inboxVentes(),
       replyTo: opts.contactEmail?.trim() || undefined,
       ...content,
     });
@@ -261,7 +313,7 @@ export class MailService {
       ctaUrl: `${brand.siteUrl}/admin/commandes/${opts.orderId}`,
     });
     return this.send({
-      to: this.adminInbox(),
+      to: this.inboxSales(),
       replyTo: opts.customerEmail?.trim() || undefined,
       ...content,
     });
