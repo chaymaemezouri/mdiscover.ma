@@ -14,6 +14,7 @@ import {
   Role,
 } from '@prisma/client';
 import { AuditService } from '../audit/audit.service';
+import { MailService } from '../mail/mail.service';
 import { PrismaService } from '../prisma/prisma.service';
 import {
   AdminPrepareQuoteDto,
@@ -65,6 +66,7 @@ export class QuotesService {
     private readonly pdf: QuotePdfService,
     private readonly audit: AuditService,
     private readonly config: ConfigService,
+    private readonly mail: MailService,
   ) {}
 
   async create(userId: string, dto: CreateQuoteDto) {
@@ -173,6 +175,16 @@ export class QuotesService {
       entity: 'Quote',
       entityId: quote.id,
       metadata: { number: quote.number },
+    });
+
+    void this.mail.sendAdminNewQuote({
+      quoteId: quote.id,
+      quoteNumber: quote.number,
+      contactName: quote.contactName,
+      contactEmail: quote.contactEmail,
+      companyName: quote.companyName,
+      itemCount: quote.items.length,
+      message: quote.message,
     });
 
     return this.serialize(quote);
@@ -665,6 +677,17 @@ export class QuotesService {
       entity: 'Quote',
       entityId: id,
       metadata: { orderId: order.id, orderNumber: order.number },
+    });
+
+    void this.mail.sendAdminNewOrder({
+      orderId: order.id,
+      orderNumber: order.number,
+      customerName: current.contactName,
+      customerEmail: current.contactEmail,
+      total: Number(order.total),
+      currency: order.currency,
+      paymentMethod: order.paymentMethod,
+      status: order.status,
     });
 
     return {

@@ -252,3 +252,61 @@ export function orderDeliveredEmail(vars: OrderEmailVars) {
     text: `Bonjour ${vars.customerName},\n\nVotre commande ${vars.orderNumber} a été livrée.\n\nCatalogue : ${vars.siteUrl}/catalogue\n\nL’équipe ${vars.brandName}`,
   };
 }
+
+export type AdminAlertVars = BrandVars & {
+  title: string;
+  preheader: string;
+  rows: Array<{ label: string; value: string }>;
+  message?: string | null;
+  ctaLabel: string;
+  ctaUrl: string;
+  subject: string;
+};
+
+export function adminAlertEmail(vars: AdminAlertVars) {
+  const rowsHtml = vars.rows
+    .map(
+      (row) => `
+      <tr>
+        <td style="padding:8px 0;border-bottom:1px solid rgba(14,42,71,0.08);width:34%;font-size:13px;color:#64748b;vertical-align:top;">
+          ${escapeHtml(row.label)}
+        </td>
+        <td style="padding:8px 0;border-bottom:1px solid rgba(14,42,71,0.08);font-size:14px;color:#0e2a47;font-weight:600;vertical-align:top;">
+          ${escapeHtml(row.value)}
+        </td>
+      </tr>`,
+    )
+    .join('');
+
+  const messageHtml = vars.message?.trim()
+    ? `<p style="margin:18px 0 0;padding:14px 16px;background:#f3f6f9;border-radius:12px;white-space:pre-wrap;">${escapeHtml(vars.message.trim())}</p>`
+    : '';
+
+  const html = layout({
+    brand: vars,
+    preheader: vars.preheader,
+    title: vars.title,
+    bodyHtml: `
+      <p style="margin:0 0 14px;">Nouvelle alerte sur ${escapeHtml(vars.brandName)}.</p>
+      <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse:collapse;">
+        ${rowsHtml}
+      </table>
+      ${messageHtml}
+    `,
+    ctaLabel: vars.ctaLabel,
+    ctaUrl: vars.ctaUrl,
+  });
+
+  const textRows = vars.rows
+    .map((r) => `${r.label}: ${r.value}`)
+    .join('\n');
+
+  return {
+    subject: vars.subject,
+    html,
+    text: `${vars.title}\n\n${textRows}${
+      vars.message?.trim() ? `\n\nMessage:\n${vars.message.trim()}` : ''
+    }\n\n${vars.ctaLabel}: ${vars.ctaUrl}`,
+  };
+}
+

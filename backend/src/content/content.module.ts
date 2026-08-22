@@ -4,6 +4,8 @@ import { BannersController } from './banners.controller';
 import { BannersService } from './banners.service';
 import { BlogController } from './blog.controller';
 import { BlogService } from './blog.service';
+import { ContactController } from './contact.controller';
+import { ContactService } from './contact.service';
 import { FaqController } from './faq.controller';
 import { FaqService } from './faq.service';
 import { FavoritesController } from './favorites.controller';
@@ -24,6 +26,7 @@ import { StockAlertsService } from './stock-alerts.service';
     FaqController,
     LegalController,
     BannersController,
+    ContactController,
   ],
   providers: [
     SlugService,
@@ -34,6 +37,7 @@ import { StockAlertsService } from './stock-alerts.service';
     FaqService,
     LegalService,
     BannersService,
+    ContactService,
   ],
 })
 export class ContentModule {}

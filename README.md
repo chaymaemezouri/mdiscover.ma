@@ -52,14 +52,13 @@ cd frontend && npm run dev
 
 Templates pro MDiscover (logo + branding) envoyés automatiquement :
 
-| Événement | Email |
-|-----------|--------|
-| Inscription (ou 1er login Google) | Bienvenue |
-| Chaque connexion client (email ou Google) | Bon retour |
-| Statut commande → Confirmée | Commande confirmée |
-| → En préparation | En préparation |
-| → Expédiée / En livraison | En livraison |
-| → Livrée | Livrée |
+| Événement | Destinataire | Email |
+|-----------|--------------|--------|
+| Inscription (ou 1er login Google) | Client | Bienvenue |
+| Statut commande → Confirmée / Préparation / Livraison / Livrée | Client | Suivi commande |
+| Formulaire Contact | Admin (`MAIL_SUPPORT`) | Nouveau message |
+| Nouveau devis | Admin | Nouveau devis |
+| Nouvelle commande (checkout) | Admin | Nouvelle commande |
 
 Dans `backend/.env` :
 

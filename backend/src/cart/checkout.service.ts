@@ -11,6 +11,7 @@ import {
   Prisma,
 } from '@prisma/client';
 import { AuditService } from '../audit/audit.service';
+import { MailService } from '../mail/mail.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { CartPricingService } from './cart-pricing.service';
 import { CartService } from './cart.service';
@@ -23,6 +24,7 @@ export class CheckoutService {
     private readonly cartService: CartService,
     private readonly pricing: CartPricingService,
     private readonly audit: AuditService,
+    private readonly mail: MailService,
   ) {}
 
   async checkout(userId: string, dto: CheckoutDto) {
@@ -219,6 +221,45 @@ export class CheckoutService {
         paymentMethod: order.paymentMethod,
       },
     });
+
+    const customer = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        email: true,
+        individualProfile: { select: { firstName: true, lastName: true } },
+        professionalProfile: {
+          select: { contactPerson: true, companyName: true },
+        },
+      },
+    });
+    const customerName =
+      (customer?.individualProfile
+        ? `${customer.individualProfile.firstName} ${customer.individualProfile.lastName}`
+        : '') ||
+      customer?.professionalProfile?.contactPerson ||
+      customer?.professionalProfile?.companyName ||
+      customer?.email ||
+      'Client';
+
+    void this.mail.sendAdminNewOrder({
+      orderId: order.id,
+      orderNumber: order.number,
+      customerName,
+      customerEmail: customer?.email,
+      total: Number(order.total),
+      currency: order.currency,
+      paymentMethod: order.paymentMethod,
+      status: order.status,
+    });
+
+    if (order.status === OrderStatus.CONFIRMED && customer?.email) {
+      void this.mail.sendOrderStatus(OrderStatus.CONFIRMED, {
+        email: customer.email,
+        customerName,
+        orderNumber: order.number,
+        orderId: order.id,
+      });
+    }
 
     return {
       ...order,

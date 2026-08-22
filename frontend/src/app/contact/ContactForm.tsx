@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from 'react';
 import { ArrowUpRight, CheckCircle2 } from 'lucide-react';
+import { api } from '@/lib/api';
 
 const TOPICS = [
   'Demande générale',
@@ -15,14 +16,41 @@ export function ContactForm() {
   const [topic, setTopic] = useState<(typeof TOPICS)[number]>(TOPICS[0]);
   const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  function onSubmit(e: FormEvent<HTMLFormElement>) {
+  async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (sending) return;
+
+    const form = e.currentTarget;
+    const data = new FormData(form);
+
     setSending(true);
-    window.setTimeout(() => {
-      setSending(false);
+    setError(null);
+    try {
+      await api('/contact', {
+        method: 'POST',
+        auth: false,
+        body: JSON.stringify({
+          topic,
+          name: String(data.get('name') ?? '').trim(),
+          email: String(data.get('email') ?? '').trim(),
+          company: String(data.get('company') ?? '').trim() || undefined,
+          phone: String(data.get('phone') ?? '').trim() || undefined,
+          message: String(data.get('message') ?? '').trim(),
+        }),
+      });
       setSent(true);
-    }, 400);
+      form.reset();
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : 'Envoi impossible. Réessayez dans un instant.',
+      );
+    } finally {
+      setSending(false);
+    }
   }
 
   if (sent) {
@@ -106,9 +134,16 @@ export function ContactForm() {
           name="message"
           rows={5}
           required
+          minLength={10}
           placeholder="Décrivez votre besoin, volumes, délais…"
         />
       </div>
+
+      {error ? (
+        <p className="contact-form__hint" role="alert" style={{ color: '#b42318' }}>
+          {error}
+        </p>
+      ) : null}
 
       <div className="contact-form__actions">
         <p className="contact-form__hint">
