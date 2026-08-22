@@ -1,17 +1,8 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import {
-  Clock3,
-  FileText,
-  HelpCircle,
-  Mail,
-  MapPin,
-  Phone,
-} from 'lucide-react';
 import { ContactForm } from './ContactForm';
 import {
-  CONTACT_ADDRESS_LINES,
-  CONTACT_CITY,
+  CONTACT_ADDRESS_FULL,
   CONTACT_EMAIL,
   CONTACT_HOURS,
 } from '@/lib/contact';
@@ -21,7 +12,7 @@ import './contact.css';
 export const metadata: Metadata = {
   title: 'Contact',
   description:
-    'Une question, un projet professionnel, un besoin de sourcing ou d’export ? Notre équipe est là pour vous accompagner.',
+    'Contactez MDiscover Impex Food pour un devis, un sourcing ou une question commerciale. Réponse sous 24 h ouvrées.',
 };
 
 export default function ContactPage() {
@@ -30,96 +21,48 @@ export default function ContactPage() {
   return (
     <main className="contact-page">
       <div className="contact-shell">
-        <nav className="contact-crumbs" aria-label="Fil d’Ariane">
-          <Link href="/">Accueil</Link>
-          <span aria-hidden>/</span>
-          <span aria-current="page">Contact</span>
-        </nav>
+        <div className="contact-grid">
+          <header className="contact-intro">
+            <p className="contact-intro__brand">MDiscover</p>
+            <h1 className="contact-intro__title">Contact</h1>
+            <p className="contact-intro__lead">
+              Une question ou un besoin professionnel&nbsp;? Écrivez-nous —
+              réponse sous 24&nbsp;h ouvrées.
+            </p>
 
-        <header className="contact-head">
-          <p className="contact-head__kicker">Contact · Discover</p>
-          <h1>Parlons de votre prochain besoin</h1>
-          <p className="contact-head__lead">
-            Une question, un projet professionnel, un besoin de sourcing ou
-            d’export&nbsp;? Notre équipe vous répond sous 24&nbsp;h ouvrées.
-          </p>
-        </header>
+            <ul className="contact-details" aria-label="Coordonnées">
+              <li>
+                <span>Email</span>
+                <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
+              </li>
+              <li>
+                <span>Téléphone</span>
+                <a href={telHref}>{TOP_BAR_PHONE}</a>
+              </li>
+              <li>
+                <span>Horaires</span>
+                <p>{CONTACT_HOURS}</p>
+              </li>
+              <li>
+                <span>Adresse</span>
+                <p>{CONTACT_ADDRESS_FULL}</p>
+              </li>
+            </ul>
 
-        <div className="contact-layout">
-          <aside className="contact-aside" aria-label="Coordonnées">
-            <div className="contact-aside__cards">
-              <a
-                href={`mailto:${CONTACT_EMAIL}`}
-                className="contact-info-card contact-info-card--link"
-              >
-                <span className="contact-info-card__icon" aria-hidden>
-                  <Mail size={18} strokeWidth={2} />
-                </span>
-                <span className="contact-info-card__body">
-                  <strong>Email</strong>
-                  <span>{CONTACT_EMAIL}</span>
-                </span>
-              </a>
-
-              <a href={telHref} className="contact-info-card contact-info-card--link">
-                <span className="contact-info-card__icon" aria-hidden>
-                  <Phone size={18} strokeWidth={2} />
-                </span>
-                <span className="contact-info-card__body">
-                  <strong>Téléphone</strong>
-                  <span>{TOP_BAR_PHONE}</span>
-                </span>
-              </a>
-
-              <div className="contact-info-card">
-                <span className="contact-info-card__icon" aria-hidden>
-                  <Clock3 size={18} strokeWidth={2} />
-                </span>
-                <span className="contact-info-card__body">
-                  <strong>Horaires</strong>
-                  <span>{CONTACT_HOURS}</span>
-                </span>
-              </div>
-
-              <div className="contact-info-card">
-                <span className="contact-info-card__icon" aria-hidden>
-                  <MapPin size={18} strokeWidth={2} />
-                </span>
-                <span className="contact-info-card__body">
-                  <strong>Localisation</strong>
-                  <span>
-                    {CONTACT_ADDRESS_LINES[0]}
-                    <br />
-                    {CONTACT_CITY}, Maroc
-                  </span>
-                </span>
-              </div>
-            </div>
-
-            <div className="contact-aside__links">
-              <p className="contact-aside__links-title">Besoin d’aller plus loin&nbsp;?</p>
-              <Link href="/devis" className="contact-quick-link">
-                <FileText size={16} aria-hidden />
-                Demander un devis pro
-              </Link>
-              <Link href="/faq" className="contact-quick-link">
-                <HelpCircle size={16} aria-hidden />
-                Consulter la FAQ
-              </Link>
-            </div>
-          </aside>
+            <p className="contact-intro__links">
+              <Link href="/devis">Demander un devis</Link>
+              <span aria-hidden>·</span>
+              <Link href="/faq">FAQ</Link>
+            </p>
+          </header>
 
           <section
-            className="contact-panel"
+            className="contact-form-block"
             aria-labelledby="contact-form-title"
           >
-            <div className="contact-panel__head">
-              <h2 id="contact-form-title">Envoyer un message</h2>
-              <p>
-                Décrivez votre besoin — nous vous orienterons vers la bonne
-                équipe.
-              </p>
-            </div>
+            <h2 id="contact-form-title" className="contact-form-block__title">
+              Votre message
+            </h2>
             <ContactForm />
           </section>
         </div>

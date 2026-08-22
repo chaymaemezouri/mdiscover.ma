@@ -56,15 +56,10 @@ export function ContactForm() {
   if (sent) {
     return (
       <div className="contact-form__success" role="status">
-        <span className="contact-form__success-icon" aria-hidden>
-          <CheckCircle2 size={28} strokeWidth={2} />
-        </span>
+        <CheckCircle2 size={22} strokeWidth={2} aria-hidden />
         <div>
-          <h3>Message reçu</h3>
-          <p>
-            Merci — notre équipe vous répondra dès que possible à l’adresse
-            indiquée.
-          </p>
+          <h3>Message envoyé</h3>
+          <p>Nous vous répondrons à l’adresse indiquée sous 24&nbsp;h ouvrées.</p>
         </div>
       </div>
     );
@@ -72,86 +67,67 @@ export function ContactForm() {
 
   return (
     <form className="contact-form" onSubmit={onSubmit} noValidate>
-      <input type="hidden" name="subject" value={topic} />
-
-      <fieldset className="contact-form__topics">
-        <legend>Vous souhaitez nous contacter pour</legend>
-        <div className="contact-form__topic-row" role="group">
+      <label className="contact-form__field">
+        <span>Sujet</span>
+        <select
+          name="topic"
+          value={topic}
+          onChange={(e) => setTopic(e.target.value as (typeof TOPICS)[number])}
+        >
           {TOPICS.map((item) => (
-            <button
-              key={item}
-              type="button"
-              className={`contact-form__topic${topic === item ? ' is-active' : ''}`}
-              aria-pressed={topic === item}
-              onClick={() => setTopic(item)}
-            >
+            <option key={item} value={item}>
               {item}
-            </button>
+            </option>
           ))}
-        </div>
-      </fieldset>
+        </select>
+      </label>
 
-      <div className="contact-form__grid">
-        <div className="contact-form__field">
-          <label htmlFor="ct-name">Nom</label>
-          <input id="ct-name" name="name" autoComplete="name" required />
-        </div>
-        <div className="contact-form__field">
-          <label htmlFor="ct-email">Email</label>
-          <input
-            id="ct-email"
-            name="email"
-            type="email"
-            autoComplete="email"
-            required
-          />
-        </div>
-        <div className="contact-form__field">
-          <label htmlFor="ct-company">Entreprise</label>
-          <input
-            id="ct-company"
-            name="company"
-            autoComplete="organization"
-            placeholder="Optionnel"
-          />
-        </div>
-        <div className="contact-form__field">
-          <label htmlFor="ct-phone">Téléphone</label>
-          <input
-            id="ct-phone"
-            name="phone"
-            type="tel"
-            autoComplete="tel"
-            placeholder="Optionnel"
-          />
-        </div>
+      <div className="contact-form__row">
+        <label className="contact-form__field">
+          <span>Nom</span>
+          <input name="name" autoComplete="name" required />
+        </label>
+        <label className="contact-form__field">
+          <span>Email</span>
+          <input name="email" type="email" autoComplete="email" required />
+        </label>
       </div>
 
-      <div className="contact-form__field">
-        <label htmlFor="ct-message">Votre demande</label>
+      <div className="contact-form__row">
+        <label className="contact-form__field">
+          <span>
+            Entreprise <em>optionnel</em>
+          </span>
+          <input name="company" autoComplete="organization" />
+        </label>
+        <label className="contact-form__field">
+          <span>
+            Téléphone <em>optionnel</em>
+          </span>
+          <input name="phone" type="tel" autoComplete="tel" />
+        </label>
+      </div>
+
+      <label className="contact-form__field">
+        <span>Message</span>
         <textarea
-          id="ct-message"
           name="message"
           rows={5}
           required
           minLength={10}
-          placeholder="Décrivez votre besoin, volumes, délais…"
+          placeholder="Volumes, délais, produits concernés…"
         />
-      </div>
+      </label>
 
       {error ? (
-        <p className="contact-form__hint" role="alert" style={{ color: '#b42318' }}>
+        <p className="contact-form__error" role="alert">
           {error}
         </p>
       ) : null}
 
-      <div className="contact-form__actions">
-        <p className="contact-form__hint">
-          En envoyant ce formulaire, vous acceptez d’être recontacté par notre
-          équipe commerciale.
-        </p>
+      <div className="contact-form__footer">
         <button className="contact-form__submit" type="submit" disabled={sending}>
-          {sending ? 'Envoi…' : 'Envoyer le message'}
+          {sending ? 'Envoi…' : 'Envoyer'}
           <ArrowUpRight size={16} aria-hidden />
         </button>
       </div>

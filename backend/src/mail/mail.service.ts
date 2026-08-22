@@ -181,8 +181,8 @@ export class MailService {
           : []),
       ],
       message: payload.message,
-      ctaLabel: 'Ouvrir l’admin',
-      ctaUrl: `${brand.siteUrl}/admin`,
+      ctaLabel: 'Voir dans l’admin',
+      ctaUrl: `${brand.siteUrl}/admin/contact`,
     });
     return this.send({
       to: this.adminInbox(),

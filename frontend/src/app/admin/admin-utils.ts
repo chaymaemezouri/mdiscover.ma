@@ -24,21 +24,22 @@ export function formatAdminDay(value?: string | Date | null) {
 
 export function toneForStatus(status: string) {
   const s = status.toUpperCase();
-    if (
-      [
-        'PAID',
-        'DELIVERED',
-        'SUCCEEDED',
-        'APPROVED',
-        'ACCEPTED',
-        'CONVERTED',
-        'ACTIVE',
-        'SENT',
-        'CONFIRMED',
-      ].includes(s)
-    ) {
-      return 'ok';
-    }
+  if (
+    [
+      'PAID',
+      'DELIVERED',
+      'SUCCEEDED',
+      'APPROVED',
+      'ACCEPTED',
+      'CONVERTED',
+      'ACTIVE',
+      'SENT',
+      'CONFIRMED',
+      'READ',
+    ].includes(s)
+  ) {
+    return 'ok';
+  }
   if (
     [
       'CANCELLED',
@@ -47,6 +48,7 @@ export function toneForStatus(status: string) {
       'BLOCKED',
       'REFUNDED',
       'RETURNED',
+      'ARCHIVED',
     ].includes(s)
   ) {
     return 'warn';
@@ -61,6 +63,7 @@ export function toneForStatus(status: string) {
       'IN_REVIEW',
       'UNDER_REVIEW',
       'PROCESSING',
+      'NEW',
     ].includes(s)
   ) {
     return 'info';

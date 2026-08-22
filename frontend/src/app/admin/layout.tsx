@@ -11,6 +11,7 @@ import {
   FolderTree,
   LayoutDashboard,
   LogOut,
+  Mail,
   Menu,
   Package,
   Settings,
@@ -38,6 +39,7 @@ const MAIN_NAV: NavItem[] = [
   { href: '/admin/commandes', label: 'Commandes', icon: ClipboardList },
   { href: '/admin/paiements', label: 'Paiements', icon: Wallet },
   { href: '/admin/devis', label: 'Devis', icon: FileText },
+  { href: '/admin/contact', label: 'Contact', icon: Mail },
 ];
 
 const CATALOG_NAV: NavItem[] = [
@@ -75,6 +77,7 @@ function isActive(item: NavItem, pathname: string, tab: string | null) {
 
 function titleForPath(pathname: string, tab: string | null) {
   if (pathname.startsWith('/admin/reglages')) return 'Réglages';
+  if (pathname.startsWith('/admin/contact')) return 'Messages contact';
   if (pathname.includes('/produits/nouveau')) return 'Nouveau produit';
   if (pathname.includes('/produits/categorie/nouveau')) return 'Nouvelle catégorie';
   if (/\/admin\/produits\/categorie\/[^/]+$/.test(pathname)) return 'Détail catégorie';

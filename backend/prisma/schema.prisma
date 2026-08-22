@@ -1102,3 +1102,28 @@ model Banner {
   @@map("banners")
 }
 
+enum ContactMessageStatus {
+  NEW
+  READ
+  ARCHIVED
+}
+
+model ContactMessage {
+  id        String               @id @default(cuid())
+  topic     String
+  name      String
+  email     String
+  company   String?
+  phone     String?
+  message   String               @db.Text
+  status    ContactMessageStatus @default(NEW)
+  createdAt DateTime             @default(now()) @map("created_at")
+  updatedAt DateTime             @updatedAt @map("updated_at")
+  readAt    DateTime?            @map("read_at")
+
+  @@index([status])
+  @@index([createdAt])
+  @@index([email])
+  @@map("contact_messages")
+}
+

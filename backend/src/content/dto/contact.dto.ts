@@ -1,4 +1,5 @@
-import { IsEmail, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
+import { IsEmail, IsEnum, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
+import { ContactMessageStatus } from '@prisma/client';
 
 export class CreateContactDto {
   @IsString()
@@ -28,4 +29,9 @@ export class CreateContactDto {
   @MinLength(10)
   @MaxLength(4000)
   message!: string;
+}
+
+export class UpdateContactStatusDto {
+  @IsEnum(ContactMessageStatus)
+  status!: ContactMessageStatus;
 }
