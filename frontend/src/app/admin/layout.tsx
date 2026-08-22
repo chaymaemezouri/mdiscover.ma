@@ -17,6 +17,7 @@ import {
   Settings,
   Star,
   Store,
+  User,
   Users,
   Wallet,
   X,
@@ -88,11 +89,6 @@ function titleForPath(pathname: string, tab: string | null) {
   if (/\/admin\/clients\/[^/]+$/.test(pathname)) return 'Fiche client';
   const hit = [...ALL_NAV].reverse().find((item) => isActive(item, pathname, tab));
   return hit?.label ?? 'Administration';
-}
-
-function initials(email: string) {
-  const name = email.split('@')[0] ?? 'A';
-  return name.slice(0, 2).toUpperCase();
 }
 
 function NavGroup({
@@ -247,11 +243,11 @@ function AdminChrome({
             </Link>
             <Link
               href="/compte"
-              className="ad-top__icon ad-top__avatar"
+              className="ad-top__icon"
               title={`Profil · ${user.email}`}
               aria-label="Profil"
             >
-              {initials(user.email)}
+              <User size={16} strokeWidth={1.7} aria-hidden />
             </Link>
             <button
               type="button"
