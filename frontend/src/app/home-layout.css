@@ -1506,6 +1506,8 @@
 }
 
 .home-cats__footer {
+  position: relative;
+  z-index: 45;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1547,18 +1549,25 @@
 }
 
 .home-cats__nav {
+  position: relative;
+  z-index: 45;
   display: inline-flex;
   align-items: center;
   gap: 0.55rem;
   margin-top: 0;
+  isolation: isolate;
 }
 
 .home-cats__nav-btn {
+  position: relative;
+  z-index: 1;
   display: inline-flex;
+  flex-shrink: 0;
   height: 2.5rem;
   width: 2.5rem;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
   border-radius: 999px;
   border: 1px solid color-mix(in srgb, var(--cats-navy) 28%, transparent);
   background: color-mix(in srgb, var(--cats-navy) 4%, transparent);
@@ -1908,6 +1917,8 @@
   }
 
   .home-cats__pager {
+    position: relative;
+    z-index: 45;
     grid-area: pager;
     justify-self: end;
     align-self: start;
@@ -1921,6 +1932,8 @@
   }
 
   .home-cats__meta-label {
+    position: relative;
+    z-index: 45;
     grid-area: label;
     justify-self: end;
     align-self: start;
@@ -1935,6 +1948,7 @@
 
   .home-cats__stage {
     grid-area: stage;
+    z-index: 1;
   }
 }
 
