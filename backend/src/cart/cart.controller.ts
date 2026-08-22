@@ -106,7 +106,7 @@ export class CartController {
 
   @Roles(Role.ADMIN, Role.DEVELOPER)
   @Delete('admin/promos/:id')
-  removePromo(@CurrentUser() user: AuthUser, @Param('id') id: string) {
+  deletePromoCode(@CurrentUser() user: AuthUser, @Param('id') id: string) {
     return this.cartAdminService.removePromo(id, user.id);
   }
 
