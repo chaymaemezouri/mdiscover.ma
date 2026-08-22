@@ -164,11 +164,13 @@ export default function AdminDashboardPage() {
         <div className="ad-actions">
           <button
             type="button"
-            className="ad-btn ad-btn--ghost ad-btn--sm"
+            className="ad-icon-btn"
+            title="Actualiser"
+            aria-label="Actualiser"
             disabled={loading}
             onClick={() => load(days)}
           >
-            <RefreshCw size={13} aria-hidden /> Actualiser
+            <RefreshCw size={15} />
           </button>
           <button
             type="button"

@@ -247,18 +247,22 @@ export default function AdminClientDetailPage() {
         <div className="ad-actions">
           <button
             type="button"
-            className="ad-btn ad-btn--ghost ad-btn--sm"
+            className="ad-icon-btn"
+            title="Copier l’email"
+            aria-label="Copier l’email"
             onClick={() => void copyText(client.email, 'Email')}
           >
-            <Copy size={13} /> Copier l’email
+            <Copy size={14} />
           </button>
           <button
             type="button"
-            className="ad-btn ad-btn--ghost ad-btn--sm"
+            className="ad-icon-btn"
+            title="Actualiser"
+            aria-label="Actualiser"
             disabled={loading}
             onClick={() => load()}
           >
-            <RefreshCw size={13} /> Actualiser
+            <RefreshCw size={15} />
           </button>
         </div>
       </div>

@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
-import { Download, RefreshCw, Search, X } from 'lucide-react';
+import { Check, Download, RefreshCw, Search, X } from 'lucide-react';
 import {
   api,
   apiDownload,
@@ -121,20 +121,24 @@ export default function AdminClientsPage() {
         <div className="ad-actions">
           <button
             type="button"
-            className="ad-btn ad-btn--ghost ad-btn--sm"
+            className="ad-icon-btn"
+            title="Actualiser"
+            aria-label="Actualiser"
             disabled={loading}
             onClick={() => load()}
           >
-            <RefreshCw size={13} aria-hidden /> Actualiser
+            <RefreshCw size={15} />
           </button>
           <button
             type="button"
-            className="ad-btn ad-btn--ghost ad-btn--sm"
+            className="ad-icon-btn"
+            title="Export CSV"
+            aria-label="Export CSV"
             onClick={() =>
               void apiDownload('/admin/export/customers', 'clients.csv')
             }
           >
-            <Download size={13} aria-hidden /> Export CSV
+            <Download size={15} />
           </button>
         </div>
       </div>
@@ -173,19 +177,23 @@ export default function AdminClientsPage() {
                   </button>
                   <button
                     type="button"
-                    className="ad-btn ad-btn--green ad-btn--sm"
+                    className="ad-icon-btn"
+                    title="Valider"
+                    aria-label="Valider"
                     disabled={busyId === u.id}
                     onClick={() => void review(u.id, 'APPROVED')}
                   >
-                    Valider
+                    <Check size={14} />
                   </button>
                   <button
                     type="button"
-                    className="ad-btn ad-btn--danger ad-btn--sm"
+                    className="ad-icon-btn is-danger"
+                    title="Refuser"
+                    aria-label="Refuser"
                     disabled={busyId === u.id}
                     onClick={() => void review(u.id, 'REJECTED')}
                   >
-                    Refuser
+                    <X size={14} />
                   </button>
                 </div>
               </article>

@@ -104,8 +104,8 @@
 }
 
 .admin-payment__status.is-proof {
-  background: rgba(78, 122, 99, 0.12);
-  color: #3f6a54;
+  background: rgba(59, 130, 246, 0.12);
+  color: #2563eb;
 }
 
 .admin-payment__status.is-failed {
@@ -139,8 +139,8 @@
 }
 
 .admin-payment__actions button.is-confirm {
-  border-color: #4e7a63;
-  background: #4e7a63;
+  border-color: #3b82f6;
+  background: #3b82f6;
   color: #fff;
 }
 

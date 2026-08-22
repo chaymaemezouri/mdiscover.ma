@@ -122,7 +122,7 @@ function NavGroup({
             className={`ad-side__link${active ? ' is-active' : ''}`}
             onClick={onNavigate}
           >
-            <Icon size={18} strokeWidth={1.7} aria-hidden />
+            <Icon size={15} strokeWidth={1.75} aria-hidden />
             <span>{item.label}</span>
           </Link>
         );
@@ -186,7 +186,7 @@ function AdminChrome({
               aria-label={collapsed ? 'Déplier le menu' : 'Replier le menu'}
               onClick={toggleCollapsed}
             >
-              {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+              {collapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
             </button>
           </div>
 
@@ -235,7 +235,7 @@ function AdminChrome({
               title="Voir la boutique"
               aria-label="Voir la boutique"
             >
-              <Store size={18} strokeWidth={1.7} aria-hidden />
+              <Store size={16} strokeWidth={1.7} aria-hidden />
             </Link>
             <Link
               href="/admin/reglages"
@@ -243,7 +243,7 @@ function AdminChrome({
               title="Réglages"
               aria-label="Réglages"
             >
-              <Settings size={18} strokeWidth={1.7} aria-hidden />
+              <Settings size={16} strokeWidth={1.7} aria-hidden />
             </Link>
             <Link
               href="/compte"
@@ -263,7 +263,7 @@ function AdminChrome({
                 window.location.href = '/connexion?next=/admin';
               }}
             >
-              <LogOut size={18} strokeWidth={1.7} aria-hidden />
+              <LogOut size={16} strokeWidth={1.7} aria-hidden />
             </button>
           </div>
         </header>

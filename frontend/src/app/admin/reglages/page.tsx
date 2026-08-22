@@ -399,11 +399,13 @@ export default function AdminSettingsPage() {
         <div className="ad-actions">
           <button
             type="button"
-            className="ad-btn ad-btn--ghost ad-btn--sm"
+            className="ad-icon-btn"
+            title="Actualiser"
+            aria-label="Actualiser"
             disabled={loading}
             onClick={() => load()}
           >
-            <RefreshCw size={13} aria-hidden /> Actualiser
+            <RefreshCw size={15} />
           </button>
         </div>
       </div>

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
-import { RefreshCw, Search, X } from 'lucide-react';
+import { Check, EyeOff, ExternalLink, RefreshCw, Search, Trash2, User, X } from 'lucide-react';
 import { api, mediaUrl, type AdminReview } from '@/lib/api';
 import { StarRating } from '@/components/reviews/StarRating';
 import { formatAdminDate, toneForStatus } from '../admin-utils';
@@ -154,11 +154,13 @@ export default function AdminReviewsPage() {
         <div className="ad-actions">
           <button
             type="button"
-            className="ad-btn ad-btn--ghost ad-btn--sm"
+            className="ad-icon-btn"
+            title="Actualiser"
+            aria-label="Actualiser"
             disabled={loading}
             onClick={() => load()}
           >
-            <RefreshCw size={13} aria-hidden /> Actualiser
+            <RefreshCw size={15} />
           </button>
         </div>
       </div>
@@ -258,47 +260,57 @@ export default function AdminReviewsPage() {
                 ) : null}
                 <div className="ad-item__actions">
                   <Link
-                    className="ad-btn ad-btn--ghost ad-btn--sm"
+                    className="ad-icon-btn"
                     href={`/produits/${review.product.slugFr}`}
                     target="_blank"
+                    title="Voir le produit"
+                    aria-label="Voir le produit"
                   >
-                    Produit
+                    <ExternalLink size={14} />
                   </Link>
                   {review.userId ? (
                     <Link
-                      className="ad-btn ad-btn--ghost ad-btn--sm"
+                      className="ad-icon-btn"
                       href={`/admin/clients/${review.userId}`}
+                      title="Fiche client"
+                      aria-label="Fiche client"
                     >
-                      Client
+                      <User size={14} />
                     </Link>
                   ) : null}
                   {!review.isApproved || !review.isVisible ? (
                     <button
                       type="button"
-                      className="ad-btn ad-btn--green ad-btn--sm"
+                      className="ad-icon-btn"
+                      title="Publier"
+                      aria-label="Publier"
                       disabled={busyId === review.id}
                       onClick={() => void moderate(review.id, 'approve')}
                     >
-                      Publier
+                      <Check size={14} />
                     </button>
                   ) : null}
                   {review.isVisible ? (
                     <button
                       type="button"
-                      className="ad-btn ad-btn--ghost ad-btn--sm"
+                      className="ad-icon-btn"
+                      title="Masquer"
+                      aria-label="Masquer"
                       disabled={busyId === review.id}
                       onClick={() => void moderate(review.id, 'hide')}
                     >
-                      Masquer
+                      <EyeOff size={14} />
                     </button>
                   ) : null}
                   <button
                     type="button"
-                    className="ad-btn ad-btn--danger ad-btn--sm"
+                    className="ad-icon-btn is-danger"
+                    title="Supprimer"
+                    aria-label="Supprimer"
                     disabled={busyId === review.id}
                     onClick={() => void removeReview(review.id)}
                   >
-                    Supprimer
+                    <Trash2 size={14} />
                   </button>
                 </div>
               </article>

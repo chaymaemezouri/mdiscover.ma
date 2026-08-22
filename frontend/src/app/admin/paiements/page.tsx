@@ -107,18 +107,22 @@ export default function AdminPaymentsPage() {
         <div className="ad-actions">
           <button
             type="button"
-            className="ad-btn ad-btn--ghost ad-btn--sm"
+            className="ad-icon-btn"
+            title="Actualiser"
+            aria-label="Actualiser"
             disabled={loading}
             onClick={() => load()}
           >
-            <RefreshCw size={13} aria-hidden /> Actualiser
+            <RefreshCw size={15} />
           </button>
           <button
             type="button"
-            className="ad-btn ad-btn--ghost ad-btn--sm"
+            className="ad-icon-btn"
+            title="Export CSV"
+            aria-label="Export CSV"
             onClick={exportCsv}
           >
-            <Download size={13} aria-hidden /> Export CSV
+            <Download size={15} />
           </button>
         </div>
       </div>

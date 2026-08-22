@@ -229,24 +229,28 @@ export default function AdminProductsPage() {
         <div className="ad-actions">
           <button
             type="button"
-            className="ad-btn ad-btn--ghost ad-btn--sm"
+            className="ad-icon-btn"
+            title="Actualiser"
+            aria-label="Actualiser"
             disabled={loading}
             onClick={() => load()}
           >
-            <RefreshCw size={13} aria-hidden /> Actualiser
+            <RefreshCw size={15} />
           </button>
           {tab === 'produits' ? (
             <>
               <button
                 type="button"
-                className="ad-btn ad-btn--ghost ad-btn--sm"
+                className="ad-icon-btn"
+                title="Export CSV"
+                aria-label="Export CSV"
                 onClick={() =>
                   void apiDownload('/admin/export/products', 'produits.csv')
                 }
               >
-                <Download size={13} aria-hidden /> Export CSV
+                <Download size={15} />
               </button>
-              <Link href="/admin/produits/nouveau" className="ad-btn">
+              <Link href="/admin/produits/nouveau" className="ad-btn ad-btn--sm">
                 + Nouveau produit
               </Link>
             </>
@@ -254,12 +258,17 @@ export default function AdminProductsPage() {
             <>
               <button
                 type="button"
-                className="ad-btn ad-btn--ghost ad-btn--sm"
+                className="ad-icon-btn"
+                title="Export CSV"
+                aria-label="Export CSV"
                 onClick={() => exportCategoriesCsv()}
               >
-                <Download size={13} aria-hidden /> Export CSV
+                <Download size={15} />
               </button>
-              <Link href="/admin/produits/categorie/nouveau" className="ad-btn">
+              <Link
+                href="/admin/produits/categorie/nouveau"
+                className="ad-btn ad-btn--sm"
+              >
                 + Nouvelle catégorie
               </Link>
             </>
@@ -377,7 +386,7 @@ export default function AdminProductsPage() {
                     <td>
                       <button
                         type="button"
-                        className="ad-icon-btn"
+                        className="ad-icon-btn is-danger"
                         title="Supprimer"
                         aria-label={`Supprimer ${p.nameFr}`}
                         disabled={busyId === p.id}
@@ -485,7 +494,7 @@ export default function AdminProductsPage() {
                   <td>
                     <button
                       type="button"
-                      className="ad-icon-btn"
+                      className="ad-icon-btn is-danger"
                       title="Supprimer"
                       aria-label={`Supprimer ${c.nameFr}`}
                       disabled={busyId === c.id}

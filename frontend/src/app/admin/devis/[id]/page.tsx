@@ -274,19 +274,23 @@ export default function AdminQuoteDetailPage() {
           {quote.number ? (
             <button
               type="button"
-              className="ad-btn ad-btn--ghost ad-btn--sm"
+              className="ad-icon-btn"
+              title="Copier la réf."
+              aria-label="Copier la réf."
               onClick={() => void copyText(quote.number ?? '', 'Réf. devis')}
             >
-              <Copy size={13} /> Copier la réf.
+              <Copy size={14} />
             </button>
           ) : null}
           <button
             type="button"
-            className="ad-btn ad-btn--ghost ad-btn--sm"
+            className="ad-icon-btn"
+            title="Actualiser"
+            aria-label="Actualiser"
             disabled={loading}
             onClick={() => load()}
           >
-            <RefreshCw size={13} /> Actualiser
+            <RefreshCw size={15} />
           </button>
         </div>
       </div>

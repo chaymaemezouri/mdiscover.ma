@@ -1,7 +1,16 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { RefreshCw, Search, Trash2, X } from 'lucide-react';
+import {
+  Archive,
+  ArchiveRestore,
+  Mail,
+  RefreshCw,
+  Reply,
+  Search,
+  Trash2,
+  X,
+} from 'lucide-react';
 import { api } from '@/lib/api';
 import { formatAdminDate, toneForStatus } from '../admin-utils';
 import { useAdminConfirm } from '../AdminConfirm';
@@ -154,46 +163,55 @@ export default function AdminContactPage() {
           </p>
         </div>
         <div className="ad-actions">
-          <button type="button" className="ad-btn ad-btn--ghost" onClick={load}>
-            <RefreshCw size={15} aria-hidden /> Actualiser
+          <button
+            type="button"
+            className="ad-icon-btn"
+            title="Actualiser"
+            aria-label="Actualiser"
+            onClick={load}
+          >
+            <RefreshCw size={15} />
           </button>
         </div>
       </div>
 
-      <div className="ad-toolbar" style={{ gap: '0.75rem', flexWrap: 'wrap' }}>
-        <div className="ad-tabs">
+      <div className="ad-toolbar" style={{ gap: '0.65rem', flexWrap: 'wrap' }}>
+        <div className="ad-tabs" role="tablist" aria-label="Filtres">
           {FILTERS.map((f) => (
             <button
               key={f.id}
               type="button"
+              role="tab"
+              aria-selected={filter === f.id}
               className={`ad-tab${filter === f.id ? ' is-active' : ''}`}
               onClick={() => setFilter(f.id)}
             >
               {f.label}
-              {f.id === 'NEW' && newCount > 0 ? ` (${newCount})` : ''}
+              {f.id === 'NEW' && newCount > 0 ? ` · ${newCount}` : ''}
             </button>
           ))}
         </div>
-        <label className="ad-search-wrap">
-          <Search size={15} aria-hidden />
-          <input
-            className="ad-search"
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder="Rechercher nom, email, sujet…"
-          />
-          {q ? (
-            <button
-              type="button"
-              className="ad-search-clear"
-              aria-label="Effacer"
-              onClick={() => setQ('')}
-            >
-              <X size={14} />
-            </button>
-          ) : null}
-        </label>
       </div>
+
+      <label className="ad-search-wrap">
+        <Search size={14} aria-hidden />
+        <input
+          className="ad-search"
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder="Rechercher nom, email, sujet…"
+        />
+        {q ? (
+          <button
+            type="button"
+            className="ad-search-clear"
+            aria-label="Effacer"
+            onClick={() => setQ('')}
+          >
+            <X size={14} />
+          </button>
+        ) : null}
+      </label>
 
       {error ? <p className="ad-error">{error}</p> : null}
 
@@ -203,7 +221,11 @@ export default function AdminContactPage() {
             Chargement…
           </p>
         ) : filtered.length === 0 ? (
-          <p className="ad-empty" style={{ padding: '1rem' }}>
+          <p className="ad-empty" style={{ padding: '1.25rem' }}>
+            <Mail
+              size={16}
+              style={{ verticalAlign: 'middle', marginRight: 6, opacity: 0.5 }}
+            />
             Aucun message.
           </p>
         ) : (
@@ -214,14 +236,15 @@ export default function AdminContactPage() {
                 <th>Sujet</th>
                 <th>Contact</th>
                 <th>Date</th>
+                <th style={{ width: '1%' }} />
               </tr>
             </thead>
             <tbody>
               {filtered.map((item) => (
                 <tr
                   key={item.id}
+                  className="ad-row-click"
                   onClick={() => void openMessage(item)}
-                  style={{ cursor: 'pointer' }}
                 >
                   <td>
                     <span
@@ -238,6 +261,28 @@ export default function AdminContactPage() {
                     <div className="ad-muted">{item.email}</div>
                   </td>
                   <td className="ad-muted">{formatAdminDate(item.createdAt)}</td>
+                  <td onClick={(e) => e.stopPropagation()}>
+                    <div className="ad-actions">
+                      <a
+                        className="ad-icon-btn"
+                        href={`mailto:${item.email}`}
+                        title="Répondre"
+                        aria-label="Répondre"
+                      >
+                        <Reply size={14} />
+                      </a>
+                      <button
+                        type="button"
+                        className="ad-icon-btn is-danger"
+                        title="Supprimer"
+                        aria-label="Supprimer"
+                        disabled={busyId === item.id}
+                        onClick={() => void remove(item.id)}
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -246,22 +291,24 @@ export default function AdminContactPage() {
       </div>
 
       {selected ? (
-        <div className="ad-card" style={{ marginTop: '1rem' }}>
+        <div className="ad-card" style={{ marginTop: '0.85rem' }}>
           <div
             style={{
               display: 'flex',
               justifyContent: 'space-between',
               gap: '1rem',
               alignItems: 'flex-start',
-              marginBottom: '1rem',
+              marginBottom: '0.85rem',
             }}
           >
             <div>
-              <p className="ad-muted" style={{ margin: 0 }}>
+              <p className="ad-muted" style={{ margin: 0, fontSize: '0.7rem' }}>
                 {selected.topic}
               </p>
-              <h2 style={{ margin: '0.25rem 0' }}>{selected.name}</h2>
-              <p className="ad-muted" style={{ margin: 0 }}>
+              <h2 style={{ margin: '0.2rem 0', fontSize: '1.05rem' }}>
+                {selected.name}
+              </h2>
+              <p className="ad-muted" style={{ margin: 0, fontSize: '0.72rem' }}>
                 {formatAdminDate(selected.createdAt)}
               </p>
             </div>
@@ -291,46 +338,64 @@ export default function AdminContactPage() {
             ) : null}
           </div>
 
-          <div className="ad-item" style={{ marginBottom: '1rem' }}>
-            <p style={{ margin: 0, whiteSpace: 'pre-wrap', lineHeight: 1.55 }}>
+          <div className="ad-item" style={{ marginBottom: '0.85rem' }}>
+            <p
+              style={{
+                margin: 0,
+                whiteSpace: 'pre-wrap',
+                lineHeight: 1.55,
+                fontSize: '0.85rem',
+              }}
+            >
               {selected.message}
             </p>
           </div>
 
-          <div className="ad-actions" style={{ flexWrap: 'wrap' }}>
+          <div className="ad-actions">
             {selected.status !== 'ARCHIVED' ? (
               <button
                 type="button"
-                className="ad-btn ad-btn--ghost"
+                className="ad-icon-btn"
+                title="Archiver"
+                aria-label="Archiver"
                 disabled={busyId === selected.id}
                 onClick={() => void setStatus(selected.id, 'ARCHIVED')}
               >
-                Archiver
+                <Archive size={15} />
               </button>
             ) : (
               <button
                 type="button"
-                className="ad-btn ad-btn--ghost"
+                className="ad-icon-btn"
+                title="Désarchiver"
+                aria-label="Désarchiver"
                 disabled={busyId === selected.id}
                 onClick={() => void setStatus(selected.id, 'READ')}
               >
-                Désarchiver
+                <ArchiveRestore size={15} />
               </button>
             )}
-            <a className="ad-btn" href={`mailto:${selected.email}`}>
-              Répondre par email
+            <a
+              className="ad-icon-btn"
+              href={`mailto:${selected.email}`}
+              title="Répondre"
+              aria-label="Répondre"
+            >
+              <Reply size={15} />
             </a>
             <button
               type="button"
-              className="ad-btn ad-btn--danger"
+              className="ad-icon-btn is-danger"
+              title="Supprimer"
+              aria-label="Supprimer"
               disabled={busyId === selected.id}
               onClick={() => void remove(selected.id)}
             >
-              <Trash2 size={14} aria-hidden /> Supprimer
+              <Trash2 size={15} />
             </button>
             <button
               type="button"
-              className="ad-btn ad-btn--ghost"
+              className="ad-btn ad-btn--ghost ad-btn--sm"
               onClick={() => setSelected(null)}
             >
               Fermer
