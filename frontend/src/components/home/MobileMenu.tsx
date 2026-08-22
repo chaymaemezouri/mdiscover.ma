@@ -7,7 +7,6 @@ import { PRIMARY_NAV, SECONDARY_NAV } from '@/lib/home-nav';
 import { catalogueCategoryHref } from '@/lib/home-categories';
 import type { PublicCategoryNavItem } from '@/lib/public-categories';
 import { SearchBar } from '@/components/home/SearchBar';
-import { cn } from '@/lib/cn';
 
 type MobileMenuProps = {
   open: boolean;
@@ -15,8 +14,6 @@ type MobileMenuProps = {
   accountHref: string;
   accountLabel: string;
   cartCount: number;
-  lang: 'fr' | 'en';
-  onLang: (lang: 'fr' | 'en') => void;
   categories: PublicCategoryNavItem[];
   categoriesLoading?: boolean;
 };
@@ -31,8 +28,6 @@ export function MobileMenu({
   accountHref,
   accountLabel,
   cartCount,
-  lang,
-  onLang,
   categories,
   categoriesLoading = false,
 }: MobileMenuProps) {
@@ -135,31 +130,6 @@ export function MobileMenu({
           >
             Panier ({cartCount})
           </Link>
-          <div className="my-2 border-t border-[var(--border)]" />
-          <p className="px-3 py-2 text-xs font-semibold tracking-wide text-[var(--text-muted)] uppercase">
-            Langue
-          </p>
-          <div className="flex gap-2 px-3 pb-4">
-            {(['fr', 'en'] as const).map((code) => (
-              <button
-                key={code}
-                type="button"
-                aria-pressed={lang === code}
-                onClick={() => {
-                  onLang(code);
-                  onClose();
-                }}
-                className={cn(
-                  'inline-flex h-11 flex-1 items-center justify-center rounded-full border text-sm font-semibold uppercase transition',
-                  lang === code
-                    ? 'border-[#0F2744] bg-[#0F2744] text-white'
-                    : 'border-[rgba(15, 39, 68,0.14)] bg-white text-[#0F2744] hover:bg-[var(--brand-green-soft)]',
-                )}
-              >
-                {code}
-              </button>
-            ))}
-          </div>
         </nav>
       </div>
     </div>

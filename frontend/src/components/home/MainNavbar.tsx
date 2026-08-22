@@ -24,28 +24,22 @@ import { api } from '@/lib/api';
 import { cn } from '@/lib/cn';
 import { useShopOptional } from '@/components/shop/ShopProvider';
 
-type MainNavbarProps = {
-  lang: 'fr' | 'en';
-  onLang: (lang: 'fr' | 'en') => void;
-};
-
 const NAV_LINKS = [...PRIMARY_NAV, ...SECONDARY_NAV].filter(
   (item) => item.label !== 'Catégories',
 );
 
-export function MainNavbar(props: MainNavbarProps) {
+export function MainNavbar() {
   return (
-    <Suspense fallback={<MainNavbarShell {...props} />}>
-      <MainNavbarWithParams {...props} />
+    <Suspense fallback={<MainNavbarShell />}>
+      <MainNavbarWithParams />
     </Suspense>
   );
 }
 
-function MainNavbarWithParams(props: MainNavbarProps) {
+function MainNavbarWithParams() {
   const searchParams = useSearchParams();
   return (
     <MainNavbarShell
-      {...props}
       sort={searchParams.get('sort')}
       category={searchParams.get('category')}
     />
@@ -53,11 +47,12 @@ function MainNavbarWithParams(props: MainNavbarProps) {
 }
 
 function MainNavbarShell({
-  lang,
-  onLang,
   sort,
   category,
-}: MainNavbarProps & { sort?: string | null; category?: string | null }) {
+}: {
+  sort?: string | null;
+  category?: string | null;
+}) {
   const pathname = usePathname();
   const shop = useShopOptional();
   const isHome = pathname === '/';
@@ -413,8 +408,6 @@ function MainNavbarShell({
         accountHref={accountHref}
         accountLabel={accountLine}
         cartCount={cartCount}
-        lang={lang}
-        onLang={onLang}
         categories={navCategories}
         categoriesLoading={categoriesLoading}
       />
