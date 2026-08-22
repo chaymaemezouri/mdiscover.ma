@@ -104,6 +104,12 @@ export class CartController {
     return this.cartAdminService.updatePromo(id, dto, user.id);
   }
 
+  @Roles(Role.ADMIN, Role.DEVELOPER)
+  @Delete('admin/promos/:id')
+  removePromo(@CurrentUser() user: AuthUser, @Param('id') id: string) {
+    return this.cartAdminService.removePromo(id, user.id);
+  }
+
   @Roles(Role.ADMIN)
   @Get('admin/shipping-rates')
   listShippingRates() {

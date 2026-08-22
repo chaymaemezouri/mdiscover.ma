@@ -62,59 +62,42 @@ export default async function AboutPage() {
   return (
     <main className="about-page">
       <div className="about-zone about-zone--hero">
-        <div className="about-shell">
-          <nav className="about-crumbs" aria-label="Fil d’Ariane">
-            <Link href="/">Accueil</Link>
-            <span aria-hidden>/</span>
-            <span aria-current="page">À propos</span>
-          </nav>
+        <section className="about-hero" aria-labelledby="about-hero-title">
+          <div className="about-hero__media" aria-hidden>
+            <Image
+              src="/hero/hs.jpeg"
+              alt=""
+              fill
+              priority
+              sizes="100vw"
+              className="about-hero__img"
+            />
+            <div className="about-hero__veil" />
+          </div>
 
-          <header className="about-intro">
-            <div className="about-intro__panel">
-              <div className="about-intro__copy">
-                <p className="about-intro__kicker">{ABOUT_HERO.eyebrow}</p>
-                <h1>{ABOUT_HERO.title}</h1>
-                <p className="about-intro__lead">{ABOUT_HERO.lead}</p>
-                <p className="about-intro__sub">{ABOUT_HERO.sub}</p>
-                <div className="about-intro__actions">
-                  <Link href="/contact" className="about-btn about-btn--primary">
-                    Nous contacter
-                    <ArrowUpRight size={16} aria-hidden />
-                  </Link>
-                  <a href="#services" className="about-btn about-btn--outline">
-                    Nos services
-                  </a>
-                </div>
-              </div>
+          <div className="about-shell about-hero__inner">
+            <nav className="about-crumbs about-crumbs--on-dark" aria-label="Fil d’Ariane">
+              <Link href="/">Accueil</Link>
+              <span aria-hidden>/</span>
+              <span aria-current="page">À propos</span>
+            </nav>
 
-              <div className="about-intro__visual">
-                <div className="about-intro__frame about-intro__frame--main">
-                  <Image
-                    src="/images/sourcing-left.jpeg"
-                    alt="Produits agroalimentaires sélectionnés pour le commerce B2B"
-                    fill
-                    sizes="(min-width: 900px) 420px, 88vw"
-                    className="about-intro__img"
-                    priority
-                  />
-                </div>
-                <div className="about-intro__frame about-intro__frame--accent">
-                  <Image
-                    src="/images/sourcing-right.jpeg"
-                    alt="Sourcing agroalimentaire professionnel"
-                    fill
-                    sizes="(min-width: 900px) 200px, 42vw"
-                    className="about-intro__img"
-                  />
-                </div>
-                <div className="about-intro__badge">
-                  <strong>15+</strong>
-                  <span>ans d’expérience</span>
-                </div>
+            <div className="about-hero__copy">
+              <p className="about-hero__brand">{ABOUT_HERO.eyebrow}</p>
+              <h1 id="about-hero-title">{ABOUT_HERO.title}</h1>
+              <p className="about-hero__lead">{ABOUT_HERO.lead}</p>
+              <div className="about-hero__actions">
+                <Link href="/contact" className="about-btn about-btn--light">
+                  Nous contacter
+                  <ArrowUpRight size={16} aria-hidden />
+                </Link>
+                <a href="#services" className="about-btn about-btn--ghost-light">
+                  Nos services
+                </a>
               </div>
             </div>
-          </header>
-        </div>
+          </div>
+        </section>
 
         <div className="about-ticker" aria-hidden>
           <div className="about-ticker__track">

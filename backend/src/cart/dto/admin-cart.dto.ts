@@ -8,6 +8,7 @@ import {
   IsString,
   Min,
   MinLength,
+  ValidateIf,
 } from 'class-validator';
 import { DeliveryMode, PromoType } from '@prisma/client';
 
@@ -50,6 +51,45 @@ export class CreatePromoCodeDto {
 }
 
 export class UpdatePromoCodeDto {
+  @IsOptional()
+  @IsString()
+  @MinLength(2)
+  code?: string;
+
+  @IsOptional()
+  @IsEnum(PromoType)
+  type?: PromoType;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  value?: number;
+
+  @IsOptional()
+  @ValidateIf((_, v) => v !== null)
+  @Type(() => Number)
+  @IsNumber()
+  @Min(0)
+  minOrderAmount?: number | null;
+
+  @IsOptional()
+  @ValidateIf((_, v) => v !== null)
+  @Type(() => Number)
+  @IsNumber()
+  @Min(1)
+  maxUses?: number | null;
+
+  @IsOptional()
+  @ValidateIf((_, v) => v !== null)
+  @IsDateString()
+  startsAt?: string | null;
+
+  @IsOptional()
+  @ValidateIf((_, v) => v !== null)
+  @IsDateString()
+  endsAt?: string | null;
+
   @IsOptional()
   @IsBoolean()
   isActive?: boolean;

@@ -70,7 +70,10 @@ export class BrandsService {
   }
 
   findAllAdmin() {
-    return this.prisma.brand.findMany({ orderBy: { name: 'asc' } });
+    return this.prisma.brand.findMany({
+      orderBy: { name: 'asc' },
+      include: { _count: { select: { products: true } } },
+    });
   }
 
   async findBySlug(slug: string, locale: 'fr' | 'en' = 'fr') {

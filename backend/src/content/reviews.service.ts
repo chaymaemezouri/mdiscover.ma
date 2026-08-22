@@ -108,6 +108,16 @@ export class ReviewsService {
       throw new NotFoundException('Product not found');
     }
 
+    const existing = await this.prisma.review.findUnique({
+      where: {
+        productId_userId: { productId: dto.productId, userId },
+      },
+    });
+    if (existing) {
+      throw new BadRequestException('Vous avez déjà noté ce produit');
+    }
+
+    // Lien optionnel à une commande livrée si elle existe (pas obligatoire).
     const purchased = await this.prisma.orderItem.findFirst({
       where: {
         productId: dto.productId,
@@ -122,28 +132,13 @@ export class ReviewsService {
           },
         },
       },
-      include: { order: true },
     });
-    if (!purchased) {
-      throw new BadRequestException(
-        'Vous ne pouvez noter que les produits que vous avez reçus',
-      );
-    }
-
-    const existing = await this.prisma.review.findUnique({
-      where: {
-        productId_userId: { productId: dto.productId, userId },
-      },
-    });
-    if (existing) {
-      throw new BadRequestException('Vous avez déjà noté ce produit');
-    }
 
     const review = await this.prisma.review.create({
       data: {
         productId: dto.productId,
         userId,
-        orderId: purchased.orderId,
+        orderId: purchased?.orderId ?? null,
         rating: dto.rating,
         title: dto.title,
         comment: dto.comment,

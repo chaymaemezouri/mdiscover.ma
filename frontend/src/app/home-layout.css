@@ -1084,16 +1084,20 @@
   .home-hero__actions {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
     gap: 0.8125rem;
     margin-top: 1.375rem !important;
     width: 100%;
   }
 
-  .home-hero__actions > *:first-child {
+  .home-hero__actions > * {
     box-sizing: border-box;
     width: 100%;
     min-width: 0;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: flex-start;
   }
 
   .home-hero__cta-primary {
@@ -1102,6 +1106,7 @@
     justify-content: space-between;
     align-items: center;
     gap: 0.75rem;
+    margin: 0;
     padding: 0 0.3rem 0 1.125rem;
     border-radius: 999px;
     min-height: 3.25rem;
@@ -1143,18 +1148,26 @@
   }
 
   .home-hero__cta-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
     width: auto;
     min-height: auto;
     height: auto;
-    margin-top: 0;
-    align-self: flex-start;
-    padding: 0.35rem 0;
+    margin: 0;
+    /* Même retrait gauche que le label du bouton « Explorer le catalogue » */
+    padding: 0.2rem 0 0.2rem 1.125rem;
     border: none;
     background: transparent;
     color: #0e2a47;
     font-size: 0.9375rem;
     font-weight: 500;
     letter-spacing: -0.01em;
+    align-self: flex-start;
+  }
+
+  .home-hero__cta-secondary::after {
+    left: 1.125rem;
   }
 
   .home-hero__cta-secondary:active {

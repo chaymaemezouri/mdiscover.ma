@@ -1,0 +1,232 @@
+/* Menu mobile — tiroir premium */
+
+.mm {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+}
+
+@media (min-width: 1024px) {
+  .mm {
+    display: none;
+  }
+}
+
+.mm__backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: rgba(9, 30, 51, 0.42);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  cursor: pointer;
+  animation: mm-fade 220ms ease both;
+}
+
+.mm__panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 21.5rem);
+  background:
+    linear-gradient(180deg, #ffffff 0%, #f7f9fc 100%);
+  box-shadow: -16px 0 48px rgba(9, 30, 51, 0.14);
+  animation: mm-slide 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.mm__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-shrink: 0;
+  padding: 0.95rem 1rem 0.95rem 1.15rem;
+  border-bottom: 1px solid rgba(14, 42, 71, 0.08);
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.mm__logo {
+  display: inline-flex;
+  min-width: 0;
+}
+
+.mm__close {
+  display: grid;
+  place-items: center;
+  width: 2.35rem;
+  height: 2.35rem;
+  flex-shrink: 0;
+  border: 0;
+  border-radius: 11px;
+  background: rgba(14, 42, 71, 0.05);
+  color: #0e2a47;
+  cursor: pointer;
+  transition: background 160ms ease, color 160ms ease;
+}
+
+.mm__close:hover {
+  background: rgba(14, 42, 71, 0.1);
+}
+
+.mm__nav {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0.85rem 0.85rem calc(1.25rem + env(safe-area-inset-bottom));
+  scrollbar-width: thin;
+  scrollbar-color: rgba(14, 42, 71, 0.18) transparent;
+}
+
+.mm__section {
+  margin-bottom: 1.15rem;
+}
+
+.mm__section--account {
+  margin-bottom: 0.25rem;
+  padding: 0.85rem 0.65rem 0.55rem;
+  border-radius: 16px;
+  background: rgba(14, 42, 71, 0.035);
+}
+
+.mm__label {
+  margin: 0 0.55rem 0.45rem;
+  color: #7a8aa0;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.mm__list {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.mm__empty {
+  margin: 0;
+  padding: 0.75rem 0.7rem;
+  color: #7a8aa0;
+  font-size: 0.85rem;
+}
+
+.mm__link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  min-height: 2.7rem;
+  padding: 0.55rem 0.7rem;
+  border-radius: 12px;
+  color: #173553;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  text-decoration: none;
+  transition: background 150ms ease, color 150ms ease;
+}
+
+.mm__link svg:last-child {
+  flex-shrink: 0;
+  color: #9aa8ba;
+}
+
+.mm__link:hover,
+.mm__link:active {
+  background: #fff;
+  color: #0e2a47;
+  box-shadow: 0 1px 0 rgba(14, 42, 71, 0.04);
+}
+
+.mm__link:hover svg:last-child,
+.mm__link:active svg:last-child {
+  color: #0e2a47;
+}
+
+.mm__link-main {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 0;
+}
+
+.mm__link-main svg {
+  flex-shrink: 0;
+  color: #5d718a;
+}
+
+.mm__badge {
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.35rem;
+  height: 1.35rem;
+  padding: 0 0.35rem;
+  border-radius: 999px;
+  background: #0e2a47;
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.mm__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  width: 100%;
+  min-height: 2.75rem;
+  margin-top: 0.65rem;
+  padding: 0.55rem 1rem;
+  border-radius: 12px;
+  background: #0e2a47;
+  color: #fff;
+  font-size: 0.86rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  box-shadow: 0 8px 20px rgba(14, 42, 71, 0.18);
+  transition: background 160ms ease, transform 160ms ease;
+}
+
+.mm__cta:hover,
+.mm__cta:active {
+  background: #163556;
+  color: #fff;
+}
+
+.mm__cta:active {
+  transform: scale(0.985);
+}
+
+@keyframes mm-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes mm-slide {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mm__backdrop,
+  .mm__panel {
+    animation: none;
+  }
+
+  .mm__cta:active {
+    transform: none;
+  }
+}

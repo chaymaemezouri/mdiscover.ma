@@ -2,11 +2,23 @@
 
 import Link from 'next/link';
 import { useEffect } from 'react';
-import { X } from 'lucide-react';
+import {
+  ChevronRight,
+  Heart,
+  Info,
+  LayoutGrid,
+  Mail,
+  Package,
+  ShoppingBag,
+  Sparkles,
+  UserRound,
+  X,
+} from 'lucide-react';
+import { SiteLogo } from '@/components/SiteLogo';
 import { PRIMARY_NAV, SECONDARY_NAV } from '@/lib/home-nav';
 import { catalogueCategoryHref } from '@/lib/home-categories';
 import type { PublicCategoryNavItem } from '@/lib/public-categories';
-import { SearchBar } from '@/components/home/SearchBar';
+import './mobile-menu.css';
 
 type MobileMenuProps = {
   open: boolean;
@@ -21,6 +33,13 @@ type MobileMenuProps = {
 const MENU_LINKS = [...PRIMARY_NAV, ...SECONDARY_NAV].filter(
   (item) => item.label !== 'Catégories',
 );
+
+function linkIcon(label: string) {
+  if (label === 'Nouveautés') return Sparkles;
+  if (label === 'Contact') return Mail;
+  if (label === 'À propos') return Info;
+  return LayoutGrid;
+}
 
 export function MobileMenu({
   open,
@@ -47,91 +66,117 @@ export function MobileMenu({
 
   if (!open) return null;
 
+  const accountText = accountLabel === 'Compte' ? 'Connexion' : accountLabel;
+
   return (
-    <div className="fixed inset-0 z-[80] lg:hidden" role="dialog" aria-modal="true" aria-label="Menu">
+    <div className="mm" role="dialog" aria-modal="true" aria-label="Menu">
       <button
         type="button"
-        className="absolute inset-0 bg-[rgba(15, 39, 68,0.28)]"
+        className="mm__backdrop"
         aria-label="Fermer le menu"
         onClick={onClose}
       />
-      <div className="absolute inset-y-0 right-0 flex w-[min(100%,22rem)] flex-col bg-[#F3F6F9] shadow-2xl">
-        <div className="flex items-center justify-between border-b border-[var(--border)] bg-white px-4 py-3">
-          <p className="text-sm font-semibold text-[var(--primary)]">Menu</p>
+      <aside className="mm__panel">
+        <header className="mm__head">
+          <div onClick={onClose}>
+            <SiteLogo href="/" height={26} className="mm__logo" />
+          </div>
           <button
             type="button"
+            className="mm__close"
             onClick={onClose}
-            className="inline-flex h-11 w-11 items-center justify-center rounded-lg text-[var(--primary)] hover:bg-[var(--brand-green-soft)]"
             aria-label="Fermer"
           >
-            <X className="h-5 w-5" />
+            <X size={18} strokeWidth={2} />
           </button>
-        </div>
-        <div className="border-b border-[var(--border)] bg-white p-4">
-          <SearchBar compact />
-        </div>
-        <nav className="flex-1 overflow-y-auto px-2 py-2" aria-label="Navigation mobile">
-          <p className="px-3 py-2 text-xs font-semibold tracking-wide text-[var(--text-muted)] uppercase">
-            Catégories
-          </p>
-          {categoriesLoading ? (
-            <p className="px-3 py-2 text-sm text-[var(--text-muted)]">Chargement…</p>
-          ) : categories.length === 0 ? (
-            <p className="px-3 py-2 text-sm text-[var(--text-muted)]">Aucune catégorie</p>
-          ) : (
-            categories.map((cat) => (
-              <Link
-                key={cat.slugFr}
-                href={catalogueCategoryHref(cat.slugFr)}
-                onClick={onClose}
-                className="block rounded-lg px-3 py-3 text-sm font-semibold text-[var(--text)] hover:bg-white"
-              >
-                {cat.nameFr}
-              </Link>
-            ))
-          )}
-          <Link
-            href="/catalogue"
-            onClick={onClose}
-            className="block rounded-lg px-3 py-3 text-sm font-bold text-[var(--primary)] hover:bg-white"
-          >
-            Voir tout le catalogue
-          </Link>
-          <div className="my-2 border-t border-[var(--border)]" />
-          {MENU_LINKS.map((item) => (
+        </header>
+
+        <nav className="mm__nav" aria-label="Navigation mobile">
+          <section className="mm__section">
+            <p className="mm__label">Catalogue</p>
+            <div className="mm__list">
+              {categoriesLoading ? (
+                <p className="mm__empty">Chargement…</p>
+              ) : categories.length === 0 ? (
+                <p className="mm__empty">Aucune catégorie</p>
+              ) : (
+                categories.map((cat) => (
+                  <Link
+                    key={cat.slugFr}
+                    href={catalogueCategoryHref(cat.slugFr)}
+                    onClick={onClose}
+                    className="mm__link"
+                  >
+                    <span>{cat.nameFr}</span>
+                    <ChevronRight size={16} strokeWidth={1.8} aria-hidden />
+                  </Link>
+                ))
+              )}
+            </div>
             <Link
-              key={item.href + item.label}
-              href={item.href}
+              href="/catalogue"
               onClick={onClose}
-              className="block rounded-lg px-3 py-3 text-sm font-semibold text-[var(--text)] hover:bg-white"
+              className="mm__cta"
             >
-              {item.label}
+              <Package size={16} strokeWidth={1.9} aria-hidden />
+              Voir tout le catalogue
             </Link>
-          ))}
-          <div className="my-2 border-t border-[var(--border)]" />
-          <Link
-            href={accountHref}
-            onClick={onClose}
-            className="block rounded-lg px-3 py-3 text-sm font-semibold text-[var(--text)] hover:bg-white"
-          >
-            {accountLabel === 'Compte' ? 'Connexion' : accountLabel}
-          </Link>
-          <Link
-            href="/favoris"
-            onClick={onClose}
-            className="block rounded-lg px-3 py-3 text-sm font-semibold text-[var(--text)] hover:bg-white"
-          >
-            Favoris
-          </Link>
-          <Link
-            href="/panier"
-            onClick={onClose}
-            className="block rounded-lg px-3 py-3 text-sm font-semibold text-[var(--text)] hover:bg-white"
-          >
-            Panier ({cartCount})
-          </Link>
+          </section>
+
+          <section className="mm__section">
+            <p className="mm__label">Découvrir</p>
+            <div className="mm__list">
+              {MENU_LINKS.map((item) => {
+                const Icon = linkIcon(item.label);
+                return (
+                  <Link
+                    key={item.href + item.label}
+                    href={item.href}
+                    onClick={onClose}
+                    className="mm__link"
+                  >
+                    <span className="mm__link-main">
+                      <Icon size={16} strokeWidth={1.8} aria-hidden />
+                      {item.label}
+                    </span>
+                    <ChevronRight size={16} strokeWidth={1.8} aria-hidden />
+                  </Link>
+                );
+              })}
+            </div>
+          </section>
+
+          <section className="mm__section mm__section--account">
+            <p className="mm__label">Compte</p>
+            <div className="mm__list">
+              <Link href={accountHref} onClick={onClose} className="mm__link">
+                <span className="mm__link-main">
+                  <UserRound size={16} strokeWidth={1.8} aria-hidden />
+                  {accountText}
+                </span>
+                <ChevronRight size={16} strokeWidth={1.8} aria-hidden />
+              </Link>
+              <Link href="/favoris" onClick={onClose} className="mm__link">
+                <span className="mm__link-main">
+                  <Heart size={16} strokeWidth={1.8} aria-hidden />
+                  Favoris
+                </span>
+                <ChevronRight size={16} strokeWidth={1.8} aria-hidden />
+              </Link>
+              <Link href="/panier" onClick={onClose} className="mm__link">
+                <span className="mm__link-main">
+                  <ShoppingBag size={16} strokeWidth={1.8} aria-hidden />
+                  Panier
+                  {cartCount > 0 ? (
+                    <span className="mm__badge">{cartCount}</span>
+                  ) : null}
+                </span>
+                <ChevronRight size={16} strokeWidth={1.8} aria-hidden />
+              </Link>
+            </div>
+          </section>
         </nav>
-      </div>
+      </aside>
     </div>
   );
 }

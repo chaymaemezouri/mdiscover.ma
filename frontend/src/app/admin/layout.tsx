@@ -14,9 +14,11 @@ import {
   Mail,
   Menu,
   Package,
+  Percent,
   Settings,
   Star,
   Store,
+  Tag,
   User,
   Users,
   Wallet,
@@ -61,6 +63,8 @@ const CATALOG_NAV: NavItem[] = [
       pathname.includes('/categorie') ||
       (pathname.startsWith('/admin/produits') && tab === 'categories'),
   },
+  { href: '/admin/marques', label: 'Marques', icon: Tag },
+  { href: '/admin/promos', label: 'Promos', icon: Percent },
 ];
 
 const MANAGE_NAV: NavItem[] = [
@@ -79,6 +83,8 @@ function isActive(item: NavItem, pathname: string, tab: string | null) {
 function titleForPath(pathname: string, tab: string | null) {
   if (pathname.startsWith('/admin/reglages')) return 'Réglages';
   if (pathname.startsWith('/admin/contact')) return 'Messages contact';
+  if (pathname.startsWith('/admin/marques')) return 'Marques';
+  if (pathname.startsWith('/admin/promos')) return 'Promos';
   if (pathname.includes('/produits/nouveau')) return 'Nouveau produit';
   if (pathname.includes('/produits/categorie/nouveau')) return 'Nouvelle catégorie';
   if (/\/admin\/produits\/categorie\/[^/]+$/.test(pathname)) return 'Détail catégorie';

@@ -289,13 +289,12 @@ export function ProductReviews({
                 <Check size={14} strokeWidth={2.4} aria-hidden />
                 {loggedIn ? (
                   <span>
-                    Seuls les clients ayant reçu ce produit peuvent publier un
-                    avis.
+                    Votre avis sera publié après validation par l’équipe.
                   </span>
                 ) : (
                   <span>
-                    <Link href={loginHref}>Connectez-vous</Link> — seuls les
-                    clients ayant reçu le produit peuvent noter.
+                    <Link href={loginHref}>Connectez-vous</Link> pour publier
+                    votre avis.
                   </span>
                 )}
               </p>

@@ -178,6 +178,27 @@ export type Brand = {
   descriptionEn?: string | null;
   logoUrl?: string | null;
   bannerUrl?: string | null;
+  catalogPdfUrl?: string | null;
+  seoTitleFr?: string | null;
+  seoTitleEn?: string | null;
+  seoDescriptionFr?: string | null;
+  seoDescriptionEn?: string | null;
+  isActive?: boolean;
+  _count?: { products?: number };
+};
+
+export type PromoCode = {
+  id: string;
+  code: string;
+  type: 'PERCENT' | 'FIXED' | 'FREE_SHIPPING';
+  value: string | number;
+  minOrderAmount?: string | number | null;
+  maxUses?: number | null;
+  usedCount?: number;
+  startsAt?: string | null;
+  endsAt?: string | null;
+  isActive?: boolean;
+  createdAt?: string;
 };
 
 export type Address = {

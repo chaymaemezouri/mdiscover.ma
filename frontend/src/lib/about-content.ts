@@ -1,10 +1,8 @@
 export const ABOUT_HERO = {
-  eyebrow: 'MDiscover Impex Food',
+  eyebrow: 'MDISCOVER IMPEX FOOD',
   title: 'L’agriculture sous un nouvel angle',
   lead:
-    'MDISCOVER IMPEX FOOD est une entreprise spécialisée dans l’import et l’export de produits agroalimentaires. Nous connectons producteurs, fournisseurs et acheteurs sur les marchés internationaux, en facilitant des opérations commerciales fiables et efficaces.',
-  sub:
-    'Forts d’une solide expertise en commerce international, nous accompagnons nos partenaires dans le sourcing et la distribution de produits alimentaires de qualité, tout en optimisant les flux entre le Maroc, l’Afrique, le Moyen-Orient et d’autres marchés clés.',
+    'Import-export agroalimentaire et sourcing B2B — nous connectons producteurs, fournisseurs et acheteurs entre le Maroc, l’Afrique et le Moyen-Orient.',
 } as const;
 
 export const ABOUT_MARKETS = [

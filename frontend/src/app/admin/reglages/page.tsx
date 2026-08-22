@@ -1,11 +1,13 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
+import Link from 'next/link';
 import {
   Download,
+  Percent,
   RefreshCw,
   Search,
-  Trash2,
+  Tag,
   Upload,
   X,
 } from 'lucide-react';
@@ -13,33 +15,12 @@ import {
   api,
   apiDownload,
   asList,
-  formatPrice,
 } from '@/lib/api';
 import { formatAdminDate } from '../admin-utils';
-import { useAdminConfirm } from '../AdminConfirm';
 
-type Tab = 'boutique' | 'marques' | 'promos' | 'import' | 'journal';
+type Tab = 'boutique' | 'import' | 'journal';
 
 type Setting = { id: string; key: string; value: string };
-type Brand = {
-  id: string;
-  name: string;
-  slugFr?: string;
-  descriptionFr?: string | null;
-  isActive?: boolean;
-};
-type Promo = {
-  id: string;
-  code: string;
-  type: 'PERCENT' | 'FIXED' | 'FREE_SHIPPING';
-  value: string | number;
-  minOrderAmount?: string | number | null;
-  maxUses?: number | null;
-  usedCount?: number;
-  isActive?: boolean;
-  startsAt?: string | null;
-  endsAt?: string | null;
-};
 type Audit = {
   id: string;
   action: string;
@@ -58,8 +39,6 @@ type ImportResult = {
 
 const TABS: Array<{ id: Tab; label: string }> = [
   { id: 'boutique', label: 'Boutique' },
-  { id: 'marques', label: 'Marques' },
-  { id: 'promos', label: 'Promos' },
   { id: 'import', label: 'Import CSV' },
   { id: 'journal', label: 'Journal' },
 ];
@@ -101,6 +80,7 @@ const ACTION_LABELS: Record<string, string> = {
   PAYMENT_CONFIRMED: 'Paiement confirmé',
   PROMO_CREATED: 'Code promo créé',
   PROMO_UPDATED: 'Code promo modifié',
+  PROMO_DELETED: 'Code promo supprimé',
 };
 
 function val(map: Record<string, string>, key: keyof typeof COMPANY_DEFAULTS) {
@@ -127,25 +107,12 @@ export default function AdminSettingsPage() {
   const fileRef = useRef<HTMLInputElement>(null);
   const [tab, setTab] = useState<Tab>('boutique');
   const [map, setMap] = useState<Record<string, string>>({ ...COMPANY_DEFAULTS });
-  const [brands, setBrands] = useState<Brand[]>([]);
-  const [promos, setPromos] = useState<Promo[]>([]);
   const [logs, setLogs] = useState<Audit[]>([]);
   const [q, setQ] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const { confirm, dialog } = useAdminConfirm();
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-
-  const [brandName, setBrandName] = useState('');
-  const [brandDesc, setBrandDesc] = useState('');
-  const [promoForm, setPromoForm] = useState({
-    code: '',
-    type: 'PERCENT' as Promo['type'],
-    value: '',
-    minOrderAmount: '',
-    maxUses: '',
-  });
   const [csv, setCsv] = useState('');
   const [importResult, setImportResult] = useState<ImportResult | null>(null);
 
@@ -159,18 +126,14 @@ export default function AdminSettingsPage() {
     setLoading(true);
     Promise.all([
       api<Setting[]>('/admin/settings').catch(() => []),
-      api<Brand[]>('/admin/brands').catch(() => []),
-      api<Promo[]>('/admin/promos').catch(() => []),
       api<Audit[]>('/admin/audit-logs?take=200').catch(() => []),
     ])
-      .then(([settings, brandList, promoList, audit]) => {
+      .then(([settings, audit]) => {
         const next: Record<string, string> = { ...COMPANY_DEFAULTS };
         asList<Setting>(settings).forEach((s) => {
           next[s.key] = s.value;
         });
         setMap(next);
-        setBrands(asList<Brand>(brandList));
-        setPromos(asList<Promo>(promoList));
         setLogs(asList<Audit>(audit));
         setError(null);
       })
@@ -225,129 +188,6 @@ export default function AdminSettingsPage() {
     }
   }
 
-  async function addBrand() {
-    if (brandName.trim().length < 2) {
-      setError('Le nom de la marque est requis.');
-      return;
-    }
-    setSaving(true);
-    setError(null);
-    try {
-      await api('/admin/brands', {
-        method: 'POST',
-        body: JSON.stringify({
-          name: brandName.trim(),
-          descriptionFr: brandDesc.trim() || undefined,
-        }),
-      });
-      setBrandName('');
-      setBrandDesc('');
-      flash('Marque créée.');
-      load();
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Création marque impossible');
-    } finally {
-      setSaving(false);
-    }
-  }
-
-  async function toggleBrand(brand: Brand) {
-    setSaving(true);
-    try {
-      await api(`/admin/brands/${brand.id}`, {
-        method: 'PATCH',
-        body: JSON.stringify({ isActive: brand.isActive === false }),
-      });
-      load();
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Mise à jour marque impossible');
-    } finally {
-      setSaving(false);
-    }
-  }
-
-  async function removeBrand(brand: Brand) {
-    const ok = await confirm({
-      title: 'Supprimer cette marque ?',
-      description: `« ${brand.name} » sera retirée. Cette action est définitive.`,
-      confirmLabel: 'Supprimer',
-      danger: true,
-    });
-    if (!ok) return;
-    setSaving(true);
-    try {
-      await api(`/admin/brands/${brand.id}`, { method: 'DELETE' });
-      flash('Marque supprimée.');
-      load();
-    } catch (e) {
-      setError(
-        e instanceof Error
-          ? e.message.includes('products')
-            ? 'Cette marque a des produits. Désactivez-la plutôt.'
-            : e.message
-          : 'Suppression impossible',
-      );
-    } finally {
-      setSaving(false);
-    }
-  }
-
-  async function addPromo() {
-    if (promoForm.code.trim().length < 2) {
-      setError('Indiquez un code promo.');
-      return;
-    }
-    const value = Number(promoForm.value);
-    if (!Number.isFinite(value) || value < 0) {
-      setError('Indiquez une valeur valide.');
-      return;
-    }
-    setSaving(true);
-    setError(null);
-    try {
-      await api('/admin/promos', {
-        method: 'POST',
-        body: JSON.stringify({
-          code: promoForm.code.trim().toUpperCase(),
-          type: promoForm.type,
-          value,
-          minOrderAmount: promoForm.minOrderAmount
-            ? Number(promoForm.minOrderAmount)
-            : undefined,
-          maxUses: promoForm.maxUses ? Number(promoForm.maxUses) : undefined,
-        }),
-      });
-      setPromoForm({
-        code: '',
-        type: 'PERCENT',
-        value: '',
-        minOrderAmount: '',
-        maxUses: '',
-      });
-      flash('Code promo créé.');
-      load();
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Création promo impossible');
-    } finally {
-      setSaving(false);
-    }
-  }
-
-  async function togglePromo(promo: Promo) {
-    setSaving(true);
-    try {
-      await api(`/admin/promos/${promo.id}`, {
-        method: 'PATCH',
-        body: JSON.stringify({ isActive: promo.isActive === false }),
-      });
-      load();
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Mise à jour promo impossible');
-    } finally {
-      setSaving(false);
-    }
-  }
-
   async function importCsv(dryRun: boolean) {
     if (csv.trim().length < 10) {
       setError('Collez ou importez un fichier CSV.');
@@ -394,7 +234,7 @@ export default function AdminSettingsPage() {
       <div className="ad-page-head">
         <div>
           <h1>Réglages</h1>
-          <p>Coordonnées boutique, marques, codes promo et import catalogue.</p>
+          <p>Coordonnées boutique, import catalogue et journal.</p>
         </div>
         <div className="ad-actions">
           <button
@@ -427,6 +267,17 @@ export default function AdminSettingsPage() {
       </div>
 
       {tab === 'boutique' ? (
+        <div>
+        <div className="ad-shortcuts" style={{ marginBottom: '0.85rem' }}>
+          <Link href="/admin/marques" className="ad-shortcut">
+            <Tag size={16} />
+            <span>Gérer les marques</span>
+          </Link>
+          <Link href="/admin/promos" className="ad-shortcut">
+            <Percent size={16} />
+            <span>Gérer les codes promo</span>
+          </Link>
+        </div>
         <div className="ad-grid-2 ad-grid-2--eq">
           <section className="ad-card">
             <h2>Identité & contact</h2>
@@ -643,226 +494,6 @@ export default function AdminSettingsPage() {
             </div>
           </section>
         </div>
-      ) : null}
-
-      {tab === 'marques' ? (
-        <div className="ad-grid-2">
-          <section className="ad-card">
-            <h2>Nouvelle marque</h2>
-            <div className="ad-form">
-              <label className="ad-field">
-                <span>Nom *</span>
-                <input
-                  className="ad-input"
-                  value={brandName}
-                  onChange={(e) => setBrandName(e.target.value)}
-                />
-              </label>
-              <label className="ad-field">
-                <span>Description</span>
-                <textarea
-                  className="ad-textarea"
-                  rows={3}
-                  value={brandDesc}
-                  onChange={(e) => setBrandDesc(e.target.value)}
-                />
-              </label>
-              <button
-                type="button"
-                className="ad-btn"
-                disabled={saving}
-                onClick={() => void addBrand()}
-              >
-                Créer la marque
-              </button>
-            </div>
-          </section>
-          <section className="ad-card">
-            <div className="ad-card__head">
-              <h2>Marques ({brands.length})</h2>
-            </div>
-            {brands.length === 0 ? (
-              <p className="ad-empty">Aucune marque. Le slug est généré automatiquement.</p>
-            ) : (
-              <div className="ad-list">
-                {brands.map((brand) => (
-                  <article key={brand.id} className="ad-item">
-                    <div className="ad-card__head" style={{ marginBottom: 0 }}>
-                      <div>
-                        <strong>{brand.name}</strong>
-                        <p className="ad-item__meta">
-                          {brand.slugFr ?? '—'}
-                          {brand.isActive === false ? ' · inactive' : ''}
-                        </p>
-                      </div>
-                      <div className="ad-actions">
-                        <button
-                          type="button"
-                          className="ad-btn ad-btn--ghost ad-btn--sm"
-                          disabled={saving}
-                          onClick={() => void toggleBrand(brand)}
-                        >
-                          {brand.isActive === false ? 'Activer' : 'Désactiver'}
-                        </button>
-                        <button
-                          type="button"
-                          className="ad-icon-btn"
-                          title="Supprimer"
-                          disabled={saving}
-                          onClick={() => void removeBrand(brand)}
-                        >
-                          <Trash2 size={14} />
-                        </button>
-                      </div>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            )}
-          </section>
-        </div>
-      ) : null}
-
-      {tab === 'promos' ? (
-        <div className="ad-grid-2">
-          <section className="ad-card">
-            <h2>Nouveau code</h2>
-            <div className="ad-form">
-              <label className="ad-field">
-                <span>Code *</span>
-                <input
-                  className="ad-input"
-                  value={promoForm.code}
-                  onChange={(e) =>
-                    setPromoForm({ ...promoForm, code: e.target.value })
-                  }
-                  placeholder="EX. RAMADAN10"
-                />
-              </label>
-              <div className="ad-form ad-form--2">
-                <label className="ad-field">
-                  <span>Type</span>
-                  <select
-                    className="ad-select"
-                    value={promoForm.type}
-                    onChange={(e) =>
-                      setPromoForm({
-                        ...promoForm,
-                        type: e.target.value as Promo['type'],
-                      })
-                    }
-                  >
-                    <option value="PERCENT">Pourcentage</option>
-                    <option value="FIXED">Montant fixe</option>
-                    <option value="FREE_SHIPPING">Livraison offerte</option>
-                  </select>
-                </label>
-                <label className="ad-field">
-                  <span>
-                    {promoForm.type === 'PERCENT' ? 'Valeur %' : 'Valeur MAD'}
-                  </span>
-                  <input
-                    className="ad-input"
-                    type="number"
-                    min="0"
-                    value={promoForm.value}
-                    onChange={(e) =>
-                      setPromoForm({ ...promoForm, value: e.target.value })
-                    }
-                  />
-                </label>
-              </div>
-              <div className="ad-form ad-form--2">
-                <label className="ad-field">
-                  <span>Minimum commande</span>
-                  <input
-                    className="ad-input"
-                    type="number"
-                    min="0"
-                    value={promoForm.minOrderAmount}
-                    onChange={(e) =>
-                      setPromoForm({
-                        ...promoForm,
-                        minOrderAmount: e.target.value,
-                      })
-                    }
-                  />
-                </label>
-                <label className="ad-field">
-                  <span>Utilisations max</span>
-                  <input
-                    className="ad-input"
-                    type="number"
-                    min="1"
-                    value={promoForm.maxUses}
-                    onChange={(e) =>
-                      setPromoForm({ ...promoForm, maxUses: e.target.value })
-                    }
-                  />
-                </label>
-              </div>
-              <button
-                type="button"
-                className="ad-btn"
-                disabled={saving}
-                onClick={() => void addPromo()}
-              >
-                Créer le code
-              </button>
-            </div>
-          </section>
-          <section className="ad-card">
-            <h2>Codes ({promos.length})</h2>
-            {promos.length === 0 ? (
-              <p className="ad-empty">Aucun code promo.</p>
-            ) : (
-              <div className="ad-table-wrap" style={{ boxShadow: 'none', border: 0 }}>
-                <table className="ad-table">
-                  <thead>
-                    <tr>
-                      <th>Code</th>
-                      <th>Réduction</th>
-                      <th>Usage</th>
-                      <th></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {promos.map((promo) => (
-                      <tr key={promo.id}>
-                        <td>
-                          <strong>{promo.code}</strong>
-                          <div className="ad-muted">
-                            {promo.isActive === false ? 'Inactif' : 'Actif'}
-                          </div>
-                        </td>
-                        <td>
-                          {promo.type === 'PERCENT'
-                            ? `${promo.value} %`
-                            : promo.type === 'FREE_SHIPPING'
-                              ? 'Livraison offerte'
-                              : formatPrice(promo.value)}
-                        </td>
-                        <td>
-                          {promo.usedCount ?? 0}
-                          {promo.maxUses ? ` / ${promo.maxUses}` : ''}
-                        </td>
-                        <td>
-                          <button
-                            type="button"
-                            className="ad-btn ad-btn--ghost ad-btn--sm"
-                            disabled={saving}
-                            onClick={() => void togglePromo(promo)}
-                          >
-                            {promo.isActive === false ? 'Activer' : 'Désactiver'}
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </section>
         </div>
       ) : null}
 
@@ -1025,7 +656,7 @@ export default function AdminSettingsPage() {
           </div>
         </div>
       ) : null}
-      {dialog}
+
     </div>
   );
 }
