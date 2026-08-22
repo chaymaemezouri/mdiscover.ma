@@ -323,7 +323,7 @@ export function HomeCategoriesEditorial() {
             </p>
           </div>
           <p className="home-cats__desc">
-            Une sélection pensée pour les besoins des professionnels.
+            Une sélection MDiscover Impex Food pensée pour les professionnels.
           </p>
         </header>
 
@@ -439,12 +439,33 @@ export function HomeCategoriesEditorial() {
                         </span>
                       </motion.div>
                     </Link>
+                  ) : abs === 1 ? (
+                    <Link
+                      href={`/catalogue?category=${cat.slugFr}`}
+                      className={cn('home-cats__card home-cats__card--side')}
+                      tabIndex={0}
+                      aria-label={`${cat.nameFr} — Explorer la catégorie`}
+                    >
+                      <div className="home-cats__media">
+                        <Image
+                          src={cat.imageUrl}
+                          alt=""
+                          fill
+                          sizes="(max-width: 767px) 76vw, 250px"
+                          className="home-cats__img"
+                        />
+                        <div className="home-cats__shade home-cats__shade--side" aria-hidden />
+                      </div>
+                      <div className="home-cats__body home-cats__body--side">
+                        <h3 className="home-cats__name">{cat.nameFr}</h3>
+                      </div>
+                    </Link>
                   ) : (
                     <button
                       type="button"
                       className={cn(
                         'home-cats__card home-cats__card--side',
-                        abs >= 2 && 'home-cats__card--outer',
+                        'home-cats__card--outer',
                       )}
                       onClick={() => goTo(index)}
                       tabIndex={-1}
@@ -455,11 +476,7 @@ export function HomeCategoriesEditorial() {
                           src={cat.imageUrl}
                           alt=""
                           fill
-                          sizes={
-                            abs >= 2
-                              ? '(max-width: 767px) 160px, 190px'
-                              : '(max-width: 767px) 76vw, 250px'
-                          }
+                          sizes="(max-width: 767px) 160px, 190px"
                           className="home-cats__img"
                         />
                         <div className="home-cats__shade home-cats__shade--side" aria-hidden />

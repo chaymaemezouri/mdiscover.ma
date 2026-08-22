@@ -4,7 +4,8 @@ import Link from 'next/link';
 import { useEffect } from 'react';
 import { X } from 'lucide-react';
 import { PRIMARY_NAV, SECONDARY_NAV } from '@/lib/home-nav';
-import { HOME_CATEGORIES, catalogueCategoryHref } from '@/lib/home-categories';
+import { catalogueCategoryHref } from '@/lib/home-categories';
+import type { PublicCategoryNavItem } from '@/lib/public-categories';
 import { SearchBar } from '@/components/home/SearchBar';
 import { cn } from '@/lib/cn';
 
@@ -16,6 +17,8 @@ type MobileMenuProps = {
   cartCount: number;
   lang: 'fr' | 'en';
   onLang: (lang: 'fr' | 'en') => void;
+  categories: PublicCategoryNavItem[];
+  categoriesLoading?: boolean;
 };
 
 const MENU_LINKS = [...PRIMARY_NAV, ...SECONDARY_NAV].filter(
@@ -30,6 +33,8 @@ export function MobileMenu({
   cartCount,
   lang,
   onLang,
+  categories,
+  categoriesLoading = false,
 }: MobileMenuProps) {
   useEffect(() => {
     if (!open) return;
@@ -74,16 +79,22 @@ export function MobileMenu({
           <p className="px-3 py-2 text-xs font-semibold tracking-wide text-[var(--text-muted)] uppercase">
             Catégories
           </p>
-          {HOME_CATEGORIES.map((cat) => (
-            <Link
-              key={cat.slugFr}
-              href={catalogueCategoryHref(cat.slugFr)}
-              onClick={onClose}
-              className="block rounded-lg px-3 py-3 text-sm font-semibold text-[var(--text)] hover:bg-white"
-            >
-              {cat.nameFr}
-            </Link>
-          ))}
+          {categoriesLoading ? (
+            <p className="px-3 py-2 text-sm text-[var(--text-muted)]">Chargement…</p>
+          ) : categories.length === 0 ? (
+            <p className="px-3 py-2 text-sm text-[var(--text-muted)]">Aucune catégorie</p>
+          ) : (
+            categories.map((cat) => (
+              <Link
+                key={cat.slugFr}
+                href={catalogueCategoryHref(cat.slugFr)}
+                onClick={onClose}
+                className="block rounded-lg px-3 py-3 text-sm font-semibold text-[var(--text)] hover:bg-white"
+              >
+                {cat.nameFr}
+              </Link>
+            ))
+          )}
           <Link
             href="/catalogue"
             onClick={onClose}

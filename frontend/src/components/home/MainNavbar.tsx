@@ -15,9 +15,9 @@ import { SiteLogo } from '@/components/SiteLogo';
 import { SearchBar } from '@/components/home/SearchBar';
 import { MobileMenu } from '@/components/home/MobileMenu';
 import {
-  HOME_CATEGORIES,
   catalogueCategoryHref,
 } from '@/lib/home-categories';
+import { usePublicCategories } from '@/lib/public-categories';
 import { PRIMARY_NAV, SECONDARY_NAV } from '@/lib/home-nav';
 import { formatPrice, hasSession } from '@/lib/api';
 import { api } from '@/lib/api';
@@ -77,6 +77,7 @@ function MainNavbarShell({
 
   const cartCount = shop?.cartCount ?? localCartCount;
   const favoritesCount = shop?.favoritesCount ?? 0;
+  const { navItems: navCategories, loading: categoriesLoading } = usePublicCategories();
 
   useEffect(() => {
     if (cartLinkRef.current && shop) {
@@ -234,17 +235,27 @@ function MainNavbarShell({
                       role="menu"
                       className="absolute left-1/2 top-[calc(100%+0.55rem)] z-50 w-[min(92vw,18rem)] -translate-x-1/2 overflow-hidden rounded-2xl border border-[rgba(15,39,68,0.1)] bg-white/95 p-2 shadow-[0_20px_50px_rgba(15,39,68,0.14)] backdrop-blur-md"
                     >
-                      {HOME_CATEGORIES.map((cat) => (
-                        <Link
-                          key={cat.slugFr}
-                          href={catalogueCategoryHref(cat.slugFr)}
-                          role="menuitem"
-                          className="block rounded-xl px-3.5 py-2.5 text-sm font-medium text-[var(--text)] transition hover:bg-[var(--brand-green-soft)] hover:text-[var(--primary)]"
-                          onClick={() => setCatsOpen(false)}
-                        >
-                          {cat.nameFr}
-                        </Link>
-                      ))}
+                      {categoriesLoading ? (
+                        <p className="px-3.5 py-2.5 text-sm text-[var(--text-muted)]">
+                          Chargement…
+                        </p>
+                      ) : navCategories.length === 0 ? (
+                        <p className="px-3.5 py-2.5 text-sm text-[var(--text-muted)]">
+                          Aucune catégorie
+                        </p>
+                      ) : (
+                        navCategories.map((cat) => (
+                          <Link
+                            key={cat.slugFr}
+                            href={catalogueCategoryHref(cat.slugFr)}
+                            role="menuitem"
+                            className="block rounded-xl px-3.5 py-2.5 text-sm font-medium text-[var(--text)] transition hover:bg-[var(--brand-green-soft)] hover:text-[var(--primary)]"
+                            onClick={() => setCatsOpen(false)}
+                          >
+                            {cat.nameFr}
+                          </Link>
+                        ))
+                      )}
                       <Link
                         href="/catalogue"
                         role="menuitem"
@@ -404,6 +415,8 @@ function MainNavbarShell({
         cartCount={cartCount}
         lang={lang}
         onLang={onLang}
+        categories={navCategories}
+        categoriesLoading={categoriesLoading}
       />
     </>
   );

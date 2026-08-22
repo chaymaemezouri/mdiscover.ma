@@ -3,7 +3,10 @@
 import { Check, ChevronDown } from 'lucide-react';
 import { useEffect, useId, useState, type ReactNode } from 'react';
 import type { CatalogueFiltersState, SearchFacets } from './catalogue-data';
-import { HOME_CATEGORIES } from '@/lib/home-categories';
+import {
+  mergeCategoryFacetCounts,
+  usePublicCategories,
+} from '@/lib/public-categories';
 
 type CollapsibleId = 'categories' | 'brands';
 
@@ -139,19 +142,16 @@ export function CatalogueFilters({
     categories: true,
     brands: false,
   });
+  const { categories: publicCategories, loading: categoriesLoading } = usePublicCategories();
 
   function toggle(id: CollapsibleId) {
     setOpen((prev) => ({ ...prev, [id]: !prev[id] }));
   }
 
-  const categories = facets?.categories?.length
-    ? facets.categories
-    : HOME_CATEGORIES.map((c) => ({
-        id: c.slugFr,
-        nameFr: c.nameFr,
-        slugFr: c.slugFr,
-        count: undefined as number | undefined,
-      }));
+  const categories = mergeCategoryFacetCounts(
+    publicCategories,
+    facets?.categories,
+  );
   const brands = facets?.brands ?? [];
   const priceActive = Number(Boolean(filters.minPrice)) + Number(Boolean(filters.maxPrice));
 
@@ -190,7 +190,9 @@ export function CatalogueFilters({
         activeCount={filters.category ? 1 : 0}
         onToggle={toggle}
       >
-        {categories.length === 0 ? (
+        {categoriesLoading ? (
+          <p className="catalogue-filters__hint">Chargement…</p>
+        ) : categories.length === 0 ? (
           <p className="catalogue-filters__hint">Aucune catégorie.</p>
         ) : (
           <LimitedList total={categories.length}>
@@ -199,7 +201,7 @@ export function CatalogueFilters({
                 <CheckRow
                   key={cat.id}
                   label={cat.nameFr}
-                  count={'count' in cat ? cat.count : undefined}
+                  count={cat.count}
                   checked={filters.category === cat.slugFr}
                   onChange={(checked) =>
                     onChange({ category: checked ? cat.slugFr : '', page: 1 })

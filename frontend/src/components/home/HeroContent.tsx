@@ -4,8 +4,6 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { animate, motion, useReducedMotion } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
-import { QuoteGate } from '@/components/QuoteGate';
-
 const HERO_STATS = [
   {
     value: '48h',
@@ -86,13 +84,17 @@ export function HeroIntro() {
         show: { transition: { staggerChildren: 0.1, delayChildren: 0.08 } },
       }}
     >
+      <motion.p className="home-hero__kicker relative" variants={fadeUp}>
+        MDiscover Impex Food
+      </motion.p>
+
       <motion.h1 className="home-hero__title relative" variants={fadeUp}>
         <span className="block">L’essentiel pour les</span>
         <span className="block">professionnels.</span>
       </motion.h1>
 
       <motion.p
-        className="home-hero__desc relative mt-5 text-[15px] leading-[1.65] font-medium sm:mt-6 sm:text-[16px] sm:leading-[1.7]"
+        className="home-hero__desc relative mt-5 text-[15px] leading-[1.75] font-normal sm:mt-6 sm:text-[16px]"
         variants={fadeUp}
       >
         Produits alimentaires et d’hygiène sélectionnés pour vos besoins d’approvisionnement, de
@@ -114,14 +116,11 @@ export function HeroIntro() {
           </Link>
         </motion.div>
 
-        <QuoteGate>
-          <motion.div variants={fadeUp} className="w-full md:w-auto">
-            <Link href="/devis" className="home-hero__cta-secondary">
-              <span>Demander un devis</span>
-              <ArrowUpRight className="h-3.5 w-3.5" strokeWidth={2.2} aria-hidden />
-            </Link>
-          </motion.div>
-        </QuoteGate>
+        <motion.div variants={fadeUp} className="w-auto">
+          <Link href="/devis" className="home-hero__cta-secondary">
+            Demander un devis
+          </Link>
+        </motion.div>
       </motion.div>
     </motion.div>
   );
@@ -133,7 +132,7 @@ export function HeroStats() {
   return (
     <motion.ul
       className="home-hero__stats relative"
-      aria-label="Points forts Discover"
+      aria-label="Points forts MDiscover Impex Food"
       initial={reduce ? false : 'hidden'}
       animate="show"
       variants={{
@@ -142,7 +141,7 @@ export function HeroStats() {
     >
       {HERO_STATS.map((stat) => (
         <motion.li key={stat.label} className="home-hero__stat" variants={fadeUp}>
-          <span className="home-hero__stat-value block font-[family-name:var(--font-title)] text-[1.65rem] font-bold leading-none tracking-[-0.04em] sm:text-[1.85rem]">
+          <span className="home-hero__stat-value block font-[family-name:var(--font-title)] text-[1.7rem] font-bold leading-none tracking-[-0.04em] sm:text-[1.9rem]">
             <StatCount to={stat.count} suffix={stat.suffix} reduce={reduce} />
           </span>
           <span className="home-hero__stat-label home-hero__stat-label--desk mt-2 block text-[11px] font-medium leading-snug sm:text-[12px]">
