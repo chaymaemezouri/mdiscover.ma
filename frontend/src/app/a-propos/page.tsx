@@ -16,11 +16,9 @@ import {
   CONTACT_EMAIL,
 } from '@/lib/contact';
 import { TOP_BAR_PHONE } from '@/lib/home-nav';
-import {
-  HOME_CATEGORIES,
-  catalogueCategoryHref,
-} from '@/lib/home-categories';
-import { api, type ProductsResponse } from '@/lib/api';
+import { api, type Category, type ProductsResponse } from '@/lib/api';
+import { buildCategoryDisplaysWithFallback } from '@/lib/category-display';
+import { catalogueCategoryHref } from '@/lib/home-categories';
 import { AboutFaq } from './AboutFaq';
 import './about.css';
 
@@ -45,10 +43,21 @@ async function getBestSellers() {
   }
 }
 
+async function getCategories() {
+  try {
+    return await api<Category[]>('/categories', { auth: false });
+  } catch {
+    return [];
+  }
+}
+
 export default async function AboutPage() {
-  const bestSellers = await getBestSellers();
+  const [bestSellers, apiCategories] = await Promise.all([
+    getBestSellers(),
+    getCategories(),
+  ]);
   const telHref = `tel:${TOP_BAR_PHONE.replace(/[\s.-]/g, '')}`;
-  const categories = HOME_CATEGORIES.slice(0, 8);
+  const categories = buildCategoryDisplaysWithFallback(apiCategories).slice(0, 8);
 
   return (
     <main className="about-page">

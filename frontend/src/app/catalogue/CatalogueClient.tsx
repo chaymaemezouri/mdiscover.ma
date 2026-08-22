@@ -34,7 +34,8 @@ import {
   type SearchFacets,
   type SearchResponse,
 } from './catalogue-data';
-import { HOME_CATEGORIES } from '@/lib/home-categories';
+import { findCategoryName } from '@/lib/category-display';
+import { usePublicCategories } from '@/lib/public-categories';
 
 const SEARCH_DEBOUNCE_MS = 350;
 
@@ -89,6 +90,7 @@ export function CatalogueClient() {
   const drawerTriggerRef = useRef<HTMLButtonElement>(null);
   const drawerCloseRef = useRef<HTMLButtonElement>(null);
   const drawerPanelRef = useRef<HTMLDivElement>(null);
+  const { categories: publicCategories } = usePublicCategories();
 
   const pushFilters = useCallback(
     (next: CatalogueFiltersState, mode: 'push' | 'replace' = 'push') => {
@@ -223,7 +225,7 @@ export function CatalogueClient() {
 
   const categoryName =
     facets?.categories.find((c) => c.slugFr === filters.category)?.nameFr ??
-    HOME_CATEGORIES.find((c) => c.slugFr === filters.category)?.nameFr;
+    findCategoryName(publicCategories, filters.category);
 
   const brandName = facets?.brands.find((b) => b.slugFr === filters.brand)?.name;
 

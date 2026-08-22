@@ -70,6 +70,10 @@ export class CreateCategoryDto {
   isActive?: boolean;
 
   @IsOptional()
+  @IsBoolean()
+  featuredOnHome?: boolean;
+
+  @IsOptional()
   @IsInt()
   @Min(0)
   sortOrder?: number;
@@ -137,6 +141,10 @@ export class UpdateCategoryDto {
   @IsOptional()
   @IsBoolean()
   isActive?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  featuredOnHome?: boolean;
 
   @IsOptional()
   @IsInt()

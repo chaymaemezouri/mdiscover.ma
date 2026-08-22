@@ -21,6 +21,7 @@ type CategoryRecord = {
   seoTitleFr?: string | null;
   seoDescriptionFr?: string | null;
   isActive?: boolean;
+  featuredOnHome?: boolean;
   sortOrder?: number;
   children?: Array<{
     id: string;
@@ -49,6 +50,7 @@ const EMPTY = {
   seoDescriptionFr: '',
   sortOrder: '0',
   isActive: true,
+  featuredOnHome: false,
 };
 
 export function CategoryEditor({ categoryId }: { categoryId?: string }) {
@@ -84,6 +86,7 @@ export function CategoryEditor({ categoryId }: { categoryId?: string }) {
       seoDescriptionFr: cat.seoDescriptionFr ?? '',
       sortOrder: String(cat.sortOrder ?? 0),
       isActive: cat.isActive !== false,
+      featuredOnHome: cat.featuredOnHome === true,
     });
   }
 
@@ -132,6 +135,13 @@ export function CategoryEditor({ categoryId }: { categoryId?: string }) {
       setError('Le nom de la catégorie est requis.');
       return;
     }
+    const isRoot = !form.parentId;
+    if (isRoot && form.featuredOnHome && !form.imageUrl.trim()) {
+      setError(
+        'Ajoutez une image pour afficher cette catégorie dans « Explorez nos univers ».',
+      );
+      return;
+    }
     const nameFr = form.nameFr.trim();
     const payload = {
       nameFr,
@@ -140,6 +150,7 @@ export function CategoryEditor({ categoryId }: { categoryId?: string }) {
       imageUrl: form.imageUrl.trim() || (editing ? null : undefined),
       sortOrder: Number(form.sortOrder) || 0,
       isActive: form.isActive,
+      featuredOnHome: isRoot ? form.featuredOnHome : false,
     };
     setSaving(true);
     setError(null);
@@ -419,6 +430,22 @@ export function CategoryEditor({ categoryId }: { categoryId?: string }) {
               />
               Catégorie active (visible boutique)
             </label>
+            {!form.parentId ? (
+              <label className="ad-check" style={{ marginTop: '0.65rem' }}>
+                <input
+                  type="checkbox"
+                  checked={form.featuredOnHome}
+                  onChange={(e) =>
+                    setForm({ ...form, featuredOnHome: e.target.checked })
+                  }
+                />
+                Afficher dans « Explorez nos univers » (accueil)
+              </label>
+            ) : (
+              <p className="ad-muted" style={{ marginTop: '0.65rem' }}>
+                Seules les catégories racines peuvent apparaître dans « Explorez nos univers ».
+              </p>
+            )}
             {editing ? (
               <button
                 type="button"

@@ -123,8 +123,8 @@ export class ProductsController {
 
   @Roles(Role.ADMIN, Role.DEVELOPER)
   @Get('admin/products')
-  listAdmin() {
-    return this.productsService.findAllAdmin();
+  listAdmin(@Query('includeInactive') includeInactive?: string) {
+    return this.productsService.findAllAdmin(includeInactive === 'true');
   }
 
   @Roles(Role.ADMIN, Role.DEVELOPER)

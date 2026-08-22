@@ -160,7 +160,12 @@ export type Category = {
   descriptionFr?: string | null;
   descriptionEn?: string | null;
   imageUrl?: string | null;
+  imageAltFr?: string | null;
+  imageAltEn?: string | null;
   parentId?: string | null;
+  featuredOnHome?: boolean;
+  sortOrder?: number;
+  isActive?: boolean;
   children?: Category[];
 };
 

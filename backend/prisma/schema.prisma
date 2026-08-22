@@ -198,6 +198,7 @@ model Category {
   seoDescriptionFr String? @map("seo_description_fr")
   seoDescriptionEn String? @map("seo_description_en")
   isActive        Boolean  @default(true) @map("is_active")
+  featuredOnHome  Boolean  @default(false) @map("featured_on_home")
   sortOrder       Int      @default(0) @map("sort_order")
   createdAt       DateTime @default(now()) @map("created_at")
   updatedAt       DateTime @updatedAt @map("updated_at")

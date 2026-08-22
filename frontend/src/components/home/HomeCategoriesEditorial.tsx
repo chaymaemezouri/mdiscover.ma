@@ -16,7 +16,8 @@ import {
   useReducedMotion,
 } from 'framer-motion';
 import { ArrowLeft, ArrowRight, ArrowUpRight } from 'lucide-react';
-import { HOME_CATEGORIES, type HomeCategory } from '@/lib/home-categories';
+import { type CategoryDisplay } from '@/lib/category-display';
+import { useHomeSpotlightCategories } from '@/lib/public-categories';
 import { cn } from '@/lib/cn';
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -26,37 +27,7 @@ const AUTOPLAY_MS = 3800;
 /** Le carrousel boucle : les deux flèches restent donc toujours actives. */
 const LOOP: boolean = true;
 
-/** Ordre spotlight — Épices en focus initial. */
-const SPOTLIGHT_SLUGS = [
-  'epices',
-  'huiles-alimentaires',
-  'fruits-secs',
-  'legumineuses',
-  'fruits-legumes',
-  'cereales-riz-pates',
-  'pates',
-  'hygiene',
-] as const;
-
-const SHORT_COPY: Record<string, string> = {
-  epices: 'Aromates, poudres et sélections pour les professionnels.',
-  'huiles-alimentaires': 'Huiles alimentaires sélectionnées pour un usage professionnel.',
-  'fruits-secs': 'Sélections naturelles pour la distribution et la restauration.',
-  legumineuses: 'Légumineuses de qualité pour l’approvisionnement B2B.',
-  'fruits-legumes': 'Fraîcheur et pureté pour les professionnels.',
-  'cereales-riz-pates': 'Grains et céréales pour la cuisine professionnelle.',
-  pates: 'Pâtes de qualité pour la restauration et la distribution.',
-  hygiene: 'Gammes d’hygiène adaptées aux besoins B2B.',
-};
-
-type SpotlightCategory = HomeCategory & { short: string };
-
-function buildCategories(): SpotlightCategory[] {
-  return SPOTLIGHT_SLUGS.map((slug) => {
-    const cat = HOME_CATEGORIES.find((c) => c.slugFr === slug)!;
-    return { ...cat, short: SHORT_COPY[slug] };
-  });
-}
+type SpotlightCategory = CategoryDisplay;
 
 function wrapOffset(index: number, active: number, total: number) {
   let d = index - active;
@@ -224,7 +195,8 @@ function getTier(offset: number, layout: Layout): SlideTier {
 }
 
 export function HomeCategoriesEditorial() {
-  const categories = useMemo(() => buildCategories(), []);
+  const { displayItems: categories, loading: categoriesLoading } =
+    useHomeSpotlightCategories();
   const total = categories.length;
   const [active, setActive] = useState(0);
   const [viewportW, setViewportW] = useState(1440);
@@ -242,6 +214,10 @@ export function HomeCategoriesEditorial() {
     window.addEventListener('resize', update);
     return () => window.removeEventListener('resize', update);
   }, []);
+
+  useEffect(() => {
+    if (active >= total && total > 0) setActive(0);
+  }, [active, total]);
 
   const goTo = useCallback(
     (next: number) => {
@@ -301,6 +277,21 @@ export function HomeCategoriesEditorial() {
 
   const duration = reduce ? 0.01 : TRANSITION_S;
   const current = categories[active];
+
+  if (categoriesLoading) {
+    return (
+      <section id="categories-home" className="home-cats" aria-busy="true">
+        <div className="home-container">
+          <header className="home-cats__intro">
+            <h2 className="home-cats__title">Explorez nos univers</h2>
+            <p className="home-cats__desc">Chargement des catégories…</p>
+          </header>
+        </div>
+      </section>
+    );
+  }
+
+  if (total === 0) return null;
 
   return (
     <section

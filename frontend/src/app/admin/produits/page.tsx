@@ -21,6 +21,7 @@ type Category = {
   nameEn?: string;
   slugFr?: string;
   isActive?: boolean;
+  featuredOnHome?: boolean;
   parentId?: string | null;
   sortOrder?: number;
   imageUrl?: string | null;
@@ -44,6 +45,7 @@ export default function AdminProductsPage() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [q, setQ] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [busyId, setBusyId] = useState<string | null>(null);
   const { confirm, dialog } = useAdminConfirm();
@@ -96,18 +98,94 @@ export default function AdminProductsPage() {
   async function removeProduct(product: ProductListItem) {
     const ok = await confirm({
       title: 'Supprimer ce produit ?',
-      description: `« ${product.nameFr} » (${product.sku}) sera retiré du catalogue. Cette action est définitive.`,
+      description:
+        `« ${product.nameFr} » (${product.sku}) sera retiré du catalogue. ` +
+        'S’il est lié à une commande ou un devis, il sera désactivé (masqué) au lieu d’être effacé définitivement.',
       confirmLabel: 'Supprimer',
       danger: true,
     });
     if (!ok) return;
     setBusyId(product.id);
     setError(null);
+    setNotice(null);
     try {
-      await api(`/admin/products/${product.id}`, { method: 'DELETE' });
+      const res = await api<{ removed?: boolean; deactivated?: boolean }>(
+        `/admin/products/${product.id}`,
+        { method: 'DELETE' },
+      );
       setProducts((prev) => prev.filter((p) => p.id !== product.id));
+      if (res.deactivated) {
+        setNotice(
+          `« ${product.nameFr} » a été désactivé (présent dans une commande ou un devis). Il n’apparaît plus dans le catalogue.`,
+        );
+      } else {
+        setNotice(`« ${product.nameFr} » a été supprimé définitivement.`);
+      }
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Suppression impossible');
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  async function removeCategory(category: Category) {
+    const ok = await confirm({
+      title: 'Supprimer cette catégorie ?',
+      description:
+        `« ${category.nameFr} » sera retirée définitivement. ` +
+        'Impossible si elle contient des produits ou des sous-catégories.',
+      confirmLabel: 'Supprimer',
+      danger: true,
+    });
+    if (!ok) return;
+    setBusyId(category.id);
+    setError(null);
+    setNotice(null);
+    try {
+      await api(`/admin/categories/${category.id}`, { method: 'DELETE' });
+      setCategories((prev) => prev.filter((c) => c.id !== category.id));
+      setNotice(`« ${category.nameFr} » a été supprimée.`);
+    } catch (e) {
+      setError(
+        e instanceof Error
+          ? e.message.includes('subcategories')
+            ? 'Cette catégorie a des sous-catégories. Désactivez-la plutôt.'
+            : e.message.includes('products')
+              ? 'Cette catégorie a des produits. Désactivez-la plutôt.'
+              : e.message
+          : 'Suppression impossible',
+      );
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  async function toggleHomeFeatured(category: Category) {
+    if (category.parentId) return;
+    setBusyId(category.id);
+    setError(null);
+    try {
+      const next = !category.featuredOnHome;
+      if (next && !category.imageUrl) {
+        setError(
+          'Ajoutez d’abord une image à la catégorie pour l’afficher dans « Explorez nos univers ».',
+        );
+        return;
+      }
+      const updated = await api<Category>(`/admin/categories/${category.id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ featuredOnHome: next }),
+      });
+      setCategories((prev) =>
+        prev.map((c) => (c.id === category.id ? { ...c, ...updated } : c)),
+      );
+      setNotice(
+        next
+          ? `« ${category.nameFr} » ajoutée à Explorez nos univers.`
+          : `« ${category.nameFr} » retirée de Explorez nos univers.`,
+      );
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Mise à jour impossible');
     } finally {
       setBusyId(null);
     }
@@ -190,6 +268,7 @@ export default function AdminProductsPage() {
       </div>
 
       {error ? <p className="ad-error">{error}</p> : null}
+      {notice ? <p className="ad-success">{notice}</p> : null}
 
       <label className="ad-search-wrap">
         <Search size={18} strokeWidth={1.8} aria-hidden />
@@ -336,6 +415,8 @@ export default function AdminProductsPage() {
                 <th>Sous-cat.</th>
                 <th>Ordre</th>
                 <th>Statut</th>
+                <th>Explorez nos univers</th>
+                <th aria-label="Actions" />
               </tr>
             </thead>
             <tbody>
@@ -378,6 +459,43 @@ export default function AdminProductsPage() {
                     >
                       {c.isActive === false ? 'Inactive' : 'Active'}
                     </span>
+                  </td>
+                  <td>
+                    {!c.parentId ? (
+                      <button
+                        type="button"
+                        className={`ad-badge ${c.featuredOnHome ? 'ad-badge--ok' : 'ad-badge--mute'}`}
+                        disabled={busyId === c.id}
+                        title={
+                          c.featuredOnHome
+                            ? 'Retirer de Explorez nos univers'
+                            : 'Ajouter à Explorez nos univers'
+                        }
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          void toggleHomeFeatured(c);
+                        }}
+                      >
+                        {c.featuredOnHome ? 'Oui' : 'Non'}
+                      </button>
+                    ) : (
+                      <span className="ad-muted">—</span>
+                    )}
+                  </td>
+                  <td>
+                    <button
+                      type="button"
+                      className="ad-icon-btn"
+                      title="Supprimer"
+                      aria-label={`Supprimer ${c.nameFr}`}
+                      disabled={busyId === c.id}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        void removeCategory(c);
+                      }}
+                    >
+                      <Trash2 size={15} />
+                    </button>
                   </td>
                 </tr>
               ))}

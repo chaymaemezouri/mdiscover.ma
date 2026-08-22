@@ -1,5 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { api, type Category } from '@/lib/api';
+import {
+  buildCategoryDisplays,
+  buildCategoryDisplaysWithFallback,
+} from '@/lib/category-display';
 
 export type PublicCategoryNavItem = {
   id: string;
@@ -45,6 +49,36 @@ export function mergeCategoryFacetCounts(
   }));
 }
 
+export function useHomeSpotlightCategories() {
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      try {
+        const data = await api<Category[]>('/categories/spotlight', {
+          auth: false,
+        });
+        if (!cancelled) setCategories(data);
+      } catch {
+        if (!cancelled) setCategories([]);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  return {
+    categories,
+    loading,
+    displayItems: useMemo(() => buildCategoryDisplays(categories), [categories]),
+  };
+}
+
 export function usePublicCategories() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -70,5 +104,9 @@ export function usePublicCategories() {
     categories,
     loading,
     navItems: rootNavCategories(categories),
+    displayItems: useMemo(
+      () => buildCategoryDisplaysWithFallback(categories),
+      [categories],
+    ),
   };
 }

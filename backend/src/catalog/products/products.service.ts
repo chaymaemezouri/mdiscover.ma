@@ -214,8 +214,9 @@ export class ProductsService {
     return this.withStructuredData(product, locale);
   }
 
-  async findAllAdmin() {
+  async findAllAdmin(includeInactive = false) {
     return this.prisma.product.findMany({
+      where: includeInactive ? undefined : { isActive: true },
       include: productInclude,
       orderBy: { updatedAt: 'desc' },
       take: 200,

@@ -29,6 +29,12 @@ export class CategoriesController {
   }
 
   @Public()
+  @Get('categories/spotlight')
+  listSpotlight() {
+    return this.categoriesService.findHomeSpotlight();
+  }
+
+  @Public()
   @Get('categories/:slug')
   getBySlug(
     @Param('slug') slug: string,

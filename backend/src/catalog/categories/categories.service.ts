@@ -62,6 +62,7 @@ export class CategoriesService {
         seoDescriptionEn:
           dto.seoDescriptionEn ?? this.seoSnippet(descriptionEn, nameEn),
         isActive: dto.isActive ?? true,
+        featuredOnHome: dto.parentId ? false : (dto.featuredOnHome ?? false),
         sortOrder: dto.sortOrder ?? 0,
       },
       include: { children: true },
@@ -85,6 +86,17 @@ export class CategoriesService {
           where: { isActive: true },
           orderBy: { sortOrder: 'asc' },
         },
+      },
+      orderBy: { sortOrder: 'asc' },
+    });
+  }
+
+  async findHomeSpotlight() {
+    return this.prisma.category.findMany({
+      where: {
+        isActive: true,
+        parentId: null,
+        featuredOnHome: true,
       },
       orderBy: { sortOrder: 'asc' },
     });
@@ -227,6 +239,12 @@ export class CategoriesService {
       isActive: dto.isActive,
       sortOrder: dto.sortOrder,
     };
+
+    if (dto.featuredOnHome !== undefined) {
+      data.featuredOnHome = dto.parentId ? false : dto.featuredOnHome;
+    } else if (dto.parentId) {
+      data.featuredOnHome = false;
+    }
 
     if (dto.parentId === null) {
       data.parent = { disconnect: true };
