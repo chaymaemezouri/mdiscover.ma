@@ -940,7 +940,7 @@
   }
 
   .auth--login .auth__login-logo {
-    margin-bottom: 1.4rem;
+    margin: 0 0 1.4rem 0.15rem;
   }
 }
 
